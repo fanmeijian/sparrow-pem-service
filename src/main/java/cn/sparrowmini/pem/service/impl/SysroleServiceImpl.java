@@ -24,28 +24,30 @@ import cn.sparrowmini.pem.model.SysroleMenu.SysroleMenuPK;
 import cn.sparrowmini.pem.model.UserSysrole;
 import cn.sparrowmini.pem.model.UserSysrole.UserSysrolePK;
 import cn.sparrowmini.pem.model.constant.PreserveSysroleEnum;
-import cn.sparrowmini.pem.service.SysroleScope;
 import cn.sparrowmini.pem.service.SysroleService;
 import cn.sparrowmini.pem.service.repository.SysroleMenuRepository;
 import cn.sparrowmini.pem.service.repository.SysroleRepository;
 import cn.sparrowmini.pem.service.repository.UserSysroleRepository;
+import cn.sparrowmini.pem.service.scope.SysroleScope;
 import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 系统的角色管理，仅允许管理员和超级管理员处理
+ * @author fansword
+ *
+ */
 
 @Slf4j
 @Service
 public class SysroleServiceImpl extends AbstractPreserveScope implements SysroleService,SysroleScope {
 	@Autowired
 	SysroleRepository sysroleRepository;
-	// @Autowired SysroleUrlPermissionRepository sysroleUrlPermissionRepository;
-//	@Autowired
-//	ApiRepository urlRepository;
+	
 	@Autowired
 	UserSysroleRepository userSysroleRepository;
 	@Autowired
 	SysroleMenuRepository sysroleMenuRepository;
-	// @Autowired SysroleModelPermissionRepository sysroleModelPermissionRepository;
-	// @Autowired SysroleDataPermissionRepository sysroleDataPermissionRepository;
-
+	
 	public void delMenus(String sysroleId, List<String> menuIds) {
 		sysroleMenuRepository.deleteByIdSysroleIdAndIdMenuIdIn(sysroleId, menuIds);
 	}

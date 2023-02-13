@@ -1,4 +1,4 @@
-package cn.sparrowmini.pem.service;
+package cn.sparrowmini.pem.service.scope;
 
 public interface SysroleScope extends PreserveScope {
 	String SCOPE_ADMIN_SYSROLE_CREATE = "admin:sysrole:create";

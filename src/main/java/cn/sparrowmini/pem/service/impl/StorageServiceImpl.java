@@ -17,6 +17,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import cn.sparrowmini.pem.service.StorageService;
+import cn.sparrowmini.pem.service.exception.StorageException;
+import cn.sparrowmini.pem.service.exception.StorageFileNotFoundException;
 
 @Component
 public class StorageServiceImpl implements StorageService {

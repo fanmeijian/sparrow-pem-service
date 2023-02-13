@@ -22,12 +22,11 @@ import cn.sparrowmini.pem.model.SysroleFile.SysroleFilePK;
 import cn.sparrowmini.pem.model.UserFile;
 import cn.sparrowmini.pem.model.UserFile.UserFilePK;
 import cn.sparrowmini.pem.model.constant.SysPermissionTarget;
-import cn.sparrowmini.pem.service.FileScope;
 import cn.sparrowmini.pem.service.FileService;
-import cn.sparrowmini.pem.service.PreserveScope;
 import cn.sparrowmini.pem.service.repository.FileRepository;
 import cn.sparrowmini.pem.service.repository.SysroleFileRepository;
 import cn.sparrowmini.pem.service.repository.UserFileReposiroty;
+import cn.sparrowmini.pem.service.scope.FileScope;
 
 @Service
 public class FileServiceImpl extends AbstractPreserveScope implements FileService, FileScope {

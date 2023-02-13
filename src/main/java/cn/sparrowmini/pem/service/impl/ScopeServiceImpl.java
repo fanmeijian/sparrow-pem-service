@@ -22,12 +22,12 @@ import cn.sparrowmini.pem.model.SysroleScope.SysroleScopePK;
 import cn.sparrowmini.pem.model.UserScope;
 import cn.sparrowmini.pem.model.UserScope.UserScopePK;
 import cn.sparrowmini.pem.model.constant.SysPermissionTarget;
-import cn.sparrowmini.pem.service.PreserveScope;
-import cn.sparrowmini.pem.service.ScopeScope;
 import cn.sparrowmini.pem.service.ScopeService;
 import cn.sparrowmini.pem.service.repository.ScopeRepository;
 import cn.sparrowmini.pem.service.repository.SysroleScopeRepository;
 import cn.sparrowmini.pem.service.repository.UserScopeRepository;
+import cn.sparrowmini.pem.service.scope.PreserveScope;
+import cn.sparrowmini.pem.service.scope.ScopeScope;
 
 @Service
 public class ScopeServiceImpl extends AbstractPreserveScope implements ScopeService, ScopeScope {

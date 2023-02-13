@@ -4,8 +4,14 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.sparrowmini.pem.service.PreserveScope;
+import cn.sparrowmini.pem.service.scope.PreserveScope;
 import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 系统保留的功能通用接口
+ * @author fansword
+ *
+ */
 
 @Slf4j
 public abstract class AbstractPreserveScope implements PreserveScope {

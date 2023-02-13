@@ -1,6 +1,6 @@
-package cn.sparrowmini.pem.service;
+package cn.sparrowmini.pem.service.scope;
 
-public interface ScopeScope extends PreserveScope {
+public interface FileScope extends PreserveScope {
 	String type="scope";
 	String admin="admin";
 	String SCOPE_ADMIN_CREATE = admin + ":" + type + ":create";

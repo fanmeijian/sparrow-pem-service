@@ -1,4 +1,4 @@
-package cn.sparrowmini.pem.service;
+package cn.sparrowmini.pem.service.scope;
 
 public interface MenuScope extends PreserveScope{
 	String type="menu";

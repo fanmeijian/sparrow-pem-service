@@ -1,4 +1,4 @@
-package cn.sparrowmini.pem.service;
+package cn.sparrowmini.pem.service.scope;
 
 public interface GroupScope extends PreserveScope {
 	String type="group";

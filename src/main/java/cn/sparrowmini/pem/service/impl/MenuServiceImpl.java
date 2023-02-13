@@ -26,7 +26,6 @@ import cn.sparrowmini.pem.model.UserMenu.UserMenuPK;
 import cn.sparrowmini.pem.model.common.MenuPermission;
 import cn.sparrowmini.pem.model.constant.MenuTreeTypeEnum;
 import cn.sparrowmini.pem.model.constant.SysPermissionTarget;
-import cn.sparrowmini.pem.service.MenuScope;
 import cn.sparrowmini.pem.service.MenuService;
 import cn.sparrowmini.pem.service.SortService;
 import cn.sparrowmini.pem.service.SysroleService;
@@ -34,6 +33,7 @@ import cn.sparrowmini.pem.service.TreeService;
 import cn.sparrowmini.pem.service.repository.MenuRepository;
 import cn.sparrowmini.pem.service.repository.SysroleMenuRepository;
 import cn.sparrowmini.pem.service.repository.UserMenuRepository;
+import cn.sparrowmini.pem.service.scope.MenuScope;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

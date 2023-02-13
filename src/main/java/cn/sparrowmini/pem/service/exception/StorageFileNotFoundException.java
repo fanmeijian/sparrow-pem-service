@@ -1,4 +1,4 @@
-package cn.sparrowmini.pem.service.impl;
+package cn.sparrowmini.pem.service.exception;
 
 public class StorageFileNotFoundException extends RuntimeException {
 	/**
