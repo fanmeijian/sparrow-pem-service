@@ -1,0 +1,151 @@
+package cn.sparrowmini.pem.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.ExampleMatcher.StringMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import cn.sparrowmini.pem.model.Scope;
+import cn.sparrowmini.pem.model.SysroleScope;
+import cn.sparrowmini.pem.model.SysroleScope.SysroleScopePK;
+import cn.sparrowmini.pem.model.UserScope;
+import cn.sparrowmini.pem.model.UserScope.UserScopePK;
+import cn.sparrowmini.pem.model.constant.SysPermissionTarget;
+import cn.sparrowmini.pem.service.PreserveScope;
+import cn.sparrowmini.pem.service.ScopeScope;
+import cn.sparrowmini.pem.service.ScopeService;
+import cn.sparrowmini.pem.service.repository.ScopeRepository;
+import cn.sparrowmini.pem.service.repository.SysroleScopeRepository;
+import cn.sparrowmini.pem.service.repository.UserScopeRepository;
+
+@Service
+public class ScopeServiceImpl extends AbstractPreserveScope implements ScopeService, ScopeScope {
+
+	@Autowired
+	ScopeRepository scopeRepository;
+	@Autowired
+	SysroleScopeRepository sysroleScopeRepository;
+	@Autowired
+	UserScopeRepository userScopeRepository;
+
+	@Autowired
+	PreserveScope[] preserveScopes;
+
+	@Override
+	@ResponseStatus(value = HttpStatus.CREATED)
+	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_CREATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	public Scope create(Scope scope) {
+		return scopeRepository.save(scope);
+	}
+
+	@Override
+	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_UPDATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	public Scope update(String scopeId, Map<String, Object> map) {
+		Scope scope = scopeRepository.findById(scopeId).get();
+		PatchUpdateHelper.merge(scope, map);
+		return scopeRepository.save(scope);
+	}
+
+	@Override
+	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_READ + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	public Scope get(String id) {
+		return scopeRepository.findById(id).get();
+	}
+
+	@Override
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_DELETE + "') or hasRole('ROLE_" + ROLE_SUPER_SYSADMIN + "')")
+	public void delete(List<String> ids) {
+		scopeRepository.deleteAllByIdInBatch(ids);
+	}
+
+	@Override
+	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_LIST + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	public Page<Scope> all(Pageable pageable, Scope scope) {
+		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING);
+		return scopeRepository.findAll(Example.of(scope, matcher), pageable);
+	}
+
+	@Override
+	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_LIST + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	public Page<?> getPermissions(String scopeId, SysPermissionTarget type, Pageable pageable) {
+		Page<?> page = null;
+		switch (type) {
+		case SYSROLE:
+			page = sysroleScopeRepository.findByIdScopeId(scopeId, pageable);
+			break;
+		case USER:
+			page = userScopeRepository.findByIdScopeId(scopeId, pageable);
+			break;
+		default:
+			break;
+		}
+		return page;
+	}
+
+	@Override
+	@Transactional
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_ADD + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	public void addPermissions(String scopeId, SysPermissionTarget type, List<?> ids) {
+		switch (type) {
+		case SYSROLE:
+			ids.forEach(f -> {
+				sysroleScopeRepository.save(new SysroleScope(f.toString(), scopeId));
+			});
+			break;
+		case USER:
+			ids.forEach(f -> {
+				userScopeRepository.save(new UserScope(f.toString(), scopeId));
+			});
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	@Override
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	@Transactional
+	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_REMOVE + "') or hasRole('ROLE_" + ROLE_SUPER_SYSADMIN + "')")
+	public void removePermissions(String scopeId, SysPermissionTarget type, List<?> ids) {
+		switch (type) {
+		case SYSROLE:
+			ids.forEach(f -> {
+				sysroleScopeRepository.deleteById(new SysroleScopePK(f.toString(), scopeId));
+			});
+			break;
+		case USER:
+			ids.forEach(f -> {
+				userScopeRepository.deleteById(new UserScopePK(f.toString(), scopeId));
+			});
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	public List<String> preserveScopes() {
+		List<String> scopes = this.getScopes();
+		for (PreserveScope preserveScope : preserveScopes) {
+			scopes.addAll(preserveScope.getScopes());
+		}
+		return scopes;
+	}
+
+}
