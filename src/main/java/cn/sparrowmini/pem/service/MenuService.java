@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import cn.sparrowmini.common.api.SparrowTree;
 import cn.sparrowmini.pem.model.Menu;
-import cn.sparrowmini.pem.model.SparrowTree;
 import cn.sparrowmini.pem.model.Sysrole;
 import cn.sparrowmini.pem.model.common.MenuPermission;
 

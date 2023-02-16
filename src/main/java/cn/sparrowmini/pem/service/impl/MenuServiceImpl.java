@@ -16,8 +16,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import cn.sparrowmini.common.api.SortService;
+import cn.sparrowmini.common.api.SparrowTree;
+import cn.sparrowmini.common.api.TreeService;
 import cn.sparrowmini.pem.model.Menu;
-import cn.sparrowmini.pem.model.SparrowTree;
 import cn.sparrowmini.pem.model.Sysrole;
 import cn.sparrowmini.pem.model.SysroleMenu;
 import cn.sparrowmini.pem.model.SysroleMenu.SysroleMenuPK;
@@ -27,9 +29,7 @@ import cn.sparrowmini.pem.model.common.MenuPermission;
 import cn.sparrowmini.pem.model.constant.MenuTreeTypeEnum;
 import cn.sparrowmini.pem.model.constant.SysPermissionTarget;
 import cn.sparrowmini.pem.service.MenuService;
-import cn.sparrowmini.pem.service.SortService;
 import cn.sparrowmini.pem.service.SysroleService;
-import cn.sparrowmini.pem.service.TreeService;
 import cn.sparrowmini.pem.service.repository.MenuRepository;
 import cn.sparrowmini.pem.service.repository.SysroleMenuRepository;
 import cn.sparrowmini.pem.service.repository.UserMenuRepository;
@@ -62,7 +62,7 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 	UserService userService;
 
 	public SparrowTree<Menu, String> getTreeByParentId(String parentId) {
-		Menu menu = menuRepository.findById(parentId).orElse(new Menu(null, null));
+		Menu menu = parentId==null?new Menu(null, null): menuRepository.findById(parentId).orElse(new Menu(null, null));
 		SparrowTree<Menu, String> menuTree = new SparrowTree<Menu, String>(menu, menu.getId(), menu.getNextNodeId(),
 				menu.getNextNodeId());
 		buildTree(menuTree);

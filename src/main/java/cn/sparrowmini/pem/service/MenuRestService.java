@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.sparrowmini.common.api.SparrowTree;
 import cn.sparrowmini.pem.model.Menu;
-import cn.sparrowmini.pem.model.SparrowTree;
 import cn.sparrowmini.pem.model.constant.MenuTreeTypeEnum;
 import cn.sparrowmini.pem.model.constant.SysPermissionTarget;
 import io.swagger.v3.oas.annotations.Operation;

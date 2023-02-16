@@ -4,8 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import cn.sparrowmini.common.api.AbstractTreeService;
+import cn.sparrowmini.common.api.SparrowTree;
 import cn.sparrowmini.pem.model.Menu;
-import cn.sparrowmini.pem.model.SparrowTree;
 
 @Service
 public class MenuTreeServiceImpl extends AbstractTreeService<Menu, String> {
