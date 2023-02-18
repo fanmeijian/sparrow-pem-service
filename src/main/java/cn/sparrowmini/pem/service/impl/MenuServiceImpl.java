@@ -274,7 +274,7 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 	@Override
 	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_UPDATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
 	public Menu update(String menuId, Map<String, Object> map) {
-		Menu source = menuRepository.getById(menuId);
+		Menu source = menuRepository.findById(menuId).get();
 		PatchUpdateHelper.merge(source, map);
 		return menuRepository.save(source);
 	}

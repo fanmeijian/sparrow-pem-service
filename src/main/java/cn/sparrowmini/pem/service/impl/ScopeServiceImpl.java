@@ -98,7 +98,7 @@ public class ScopeServiceImpl extends AbstractPreserveScope implements ScopeServ
 	@Transactional
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_ADD + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
-	public void addPermissions(String scopeId, SysPermissionTarget type, List<?> ids) {
+	public void addPermissions(String scopeId, SysPermissionTarget type, List<String> ids) {
 		switch (type) {
 		case SYSROLE:
 			ids.forEach(f -> {
@@ -120,7 +120,7 @@ public class ScopeServiceImpl extends AbstractPreserveScope implements ScopeServ
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	@Transactional
 	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_REMOVE + "') or hasRole('ROLE_" + ROLE_SUPER_SYSADMIN + "')")
-	public void removePermissions(String scopeId, SysPermissionTarget type, List<?> ids) {
+	public void removePermissions(String scopeId, SysPermissionTarget type, List<String> ids) {
 		switch (type) {
 		case SYSROLE:
 			ids.forEach(f -> {

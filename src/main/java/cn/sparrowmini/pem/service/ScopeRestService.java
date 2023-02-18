@@ -65,12 +65,11 @@ public interface ScopeRestService {
 	@PostMapping("/{scopeId}/permissions")
 	@Operation(summary = "增加授权")
 	@ResponseBody
-	public void addPermissions(@PathVariable("scopeId") String scopeId, SysPermissionTarget type,
-			@RequestBody List<?> ids);
+	public void addPermissions(@PathVariable String scopeId, SysPermissionTarget type, @RequestBody List<String> ids);
 
 	@PutMapping("/{scopeId}/permissions/delete")
 	@Operation(summary = "移除授权")
 	@ResponseBody
-	public void removePermissions(@PathVariable("scopeId") String scopeId, SysPermissionTarget type,
-			@RequestBody List<?> ids);
+	public void removePermissions(@PathVariable String scopeId, SysPermissionTarget type,
+			@RequestBody List<String> ids);
 }
