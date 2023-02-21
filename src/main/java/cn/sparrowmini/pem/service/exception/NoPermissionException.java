@@ -1,6 +1,6 @@
 package cn.sparrowmini.pem.service.exception;
 
-public class NoPermissionException extends Exception {
+public class NoPermissionException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 

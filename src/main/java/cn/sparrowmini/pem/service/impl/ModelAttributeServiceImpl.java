@@ -20,10 +20,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import cn.sparrowmini.pem.model.ModelAttribute;
 import cn.sparrowmini.pem.model.ModelAttribute.ModelAttributePK;
+import cn.sparrowmini.pem.model.SysroleModelAttribute;
+import cn.sparrowmini.pem.model.SysroleModelAttribute.SysroleModelAttributeId;
+import cn.sparrowmini.pem.model.UserModelAttribute;
+import cn.sparrowmini.pem.model.UserModelAttribute.UserModelAttributeId;
 import cn.sparrowmini.pem.model.token.PermissionToken;
 import cn.sparrowmini.pem.model.token.SparrowPermissionToken;
+import cn.sparrowmini.pem.service.ModelAttributePermissionResponseBody;
 import cn.sparrowmini.pem.service.ModelAttributeService;
+import cn.sparrowmini.pem.service.PermissionRequestBody;
 import cn.sparrowmini.pem.service.repository.ModelAttributeRepository;
+import cn.sparrowmini.pem.service.repository.SysroleModelAttributeRepository;
+import cn.sparrowmini.pem.service.repository.UserModelAttributeRepository;
 
 @Service
 public class ModelAttributeServiceImpl implements ModelAttributeService {
@@ -31,6 +39,10 @@ public class ModelAttributeServiceImpl implements ModelAttributeService {
 	@Autowired
 	ModelAttributeRepository modelAttributeRepository;
 	// @Autowired ModelAttributePermissionService modelAttributePermissionService;
+	@Autowired
+	private UserModelAttributeRepository userModelAttributeRepository;
+	@Autowired
+	private SysroleModelAttributeRepository sysroleModelAttributeRepository;
 
 	@Override
 	public Page<ModelAttribute> all(Pageable pageable, ModelAttribute modelAttribute) {
@@ -44,7 +56,7 @@ public class ModelAttributeServiceImpl implements ModelAttributeService {
 	}
 
 	@Override
-	public ModelAttribute update(ModelAttributePK attributeId,Map<String, Object> map) {
+	public ModelAttribute update(ModelAttributePK attributeId, Map<String, Object> map) {
 		ModelAttribute source = modelAttributeRepository.getById(attributeId);
 		map.remove("id");
 		PatchUpdateHelper.merge(source, map);
@@ -101,24 +113,62 @@ public class ModelAttributeServiceImpl implements ModelAttributeService {
 
 	@Override
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	public void addAttributePermission(String modelId, String attributeId, PermissionToken permissionToken) {
-		this.addPermission(new ModelAttributePK(modelId, attributeId), permissionToken);
+	public void addAttributePermission(String modelId, String attributeId, PermissionRequestBody body) {
+		if (body.getSysroles() != null) {
+			body.getSysroles().forEach(f -> {
+				this.sysroleModelAttributeRepository
+						.save(new SysroleModelAttribute(new ModelAttributePK(modelId, attributeId), f.getSysroleId(),
+								f.getPermissionType(), f.getPermission()));
+			});
+		}
+
+		if (body.getUsernames() != null) {
+			body.getUsernames().forEach(f -> {
+				this.userModelAttributeRepository
+						.save(new UserModelAttribute(new ModelAttributePK(modelId, attributeId), f.getUsername(),
+								f.getPermissionType(), f.getPermission()));
+			});
+		}
 	}
 
 	@Override
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	public void removeAttributePermission(String modelId, String attributeId) {
-		this.removePermission(new ModelAttributePK(modelId, attributeId));
+	public void removeAttributePermission(String modelId, String attributeId, PermissionRequestBody body) {
+		if (body.getSysroles() != null) {
+			body.getSysroles().forEach(f -> {
+				this.sysroleModelAttributeRepository
+						.deleteById(new SysroleModelAttributeId(new ModelAttributePK(modelId, attributeId),
+								f.getSysroleId(), f.getPermissionType(), f.getPermission()));
+			});
+		}
+
+		if (body.getUsernames() != null) {
+			body.getUsernames().forEach(f -> {
+				this.userModelAttributeRepository
+						.deleteById(new UserModelAttributeId(new ModelAttributePK(modelId, attributeId),
+								f.getUsername(), f.getPermissionType(), f.getPermission()));
+			});
+		}
 	}
 
 	@Override
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void deleteAttribute(String modelId, List<String> attributeIds) {
 		List<ModelAttributePK> modelAttributePKs = new ArrayList<ModelAttributePK>();
-		attributeIds.forEach(attributeId->{
+		attributeIds.forEach(attributeId -> {
 			modelAttributePKs.add(new ModelAttributePK(modelId, attributeId));
 		});
 		this.delete(modelAttributePKs);
+	}
+
+	@Override
+	public ModelAttributePermissionResponseBody attributePermissions(String modelId, String attributeId) {
+		ModelAttributePermissionResponseBody permission = new ModelAttributePermissionResponseBody();
+		permission.getSysroles().addAll(this.sysroleModelAttributeRepository
+				.findByIdAttributeId(new ModelAttributePK(modelId, attributeId), Pageable.unpaged()).getContent());
+		permission.getUsernames().addAll(this.userModelAttributeRepository
+				.findByIdAttributeId(new ModelAttributePK(modelId, attributeId), Pageable.unpaged()).getContent());
+		return permission;
 	}
 
 	// @PostMapping("/modelAttributes/permissions")

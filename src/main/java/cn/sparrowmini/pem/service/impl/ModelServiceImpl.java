@@ -20,18 +20,28 @@ import org.springframework.stereotype.Service;
 
 import cn.sparrowmini.pem.model.Model;
 import cn.sparrowmini.pem.model.ModelAttribute;
-import cn.sparrowmini.pem.model.token.PermissionToken;
-import cn.sparrowmini.pem.model.token.SparrowPermissionToken;
+import cn.sparrowmini.pem.model.SysroleModel;
+import cn.sparrowmini.pem.model.SysroleModel.SysroleModelId;
+import cn.sparrowmini.pem.model.UserModel;
+import cn.sparrowmini.pem.model.UserModel.UserModelId;
+import cn.sparrowmini.pem.service.ModelPermissionResponseBody;
 import cn.sparrowmini.pem.service.ModelService;
+import cn.sparrowmini.pem.service.PermissionRequestBody;
 import cn.sparrowmini.pem.service.repository.ModelAttributeRepository;
 import cn.sparrowmini.pem.service.repository.ModelRepository;
 import cn.sparrowmini.pem.service.repository.PermissionTokenRepository;
+import cn.sparrowmini.pem.service.repository.SysroleModelRepository;
+import cn.sparrowmini.pem.service.repository.UserModelRepository;
 
 @Service
 public class ModelServiceImpl implements ModelService {
 
 	@Autowired
 	ModelRepository modelRepository;
+	@Autowired
+	private SysroleModelRepository sysroleModelRepository;
+	@Autowired
+	private UserModelRepository userModelRepository;
 
 	// @Autowired UserModelPermissionRepository userModelPermissionRepository;
 	// @Autowired SysroleModelPermissionRepository sysroleModelPermissionRepository;
@@ -59,10 +69,20 @@ public class ModelServiceImpl implements ModelService {
 
 	@Override
 	@Transactional
-	public void removePermission(String modelId) {
-		Model model = modelRepository.getById(modelId);
-		model.setSparrowPermissionToken(null);
-		modelRepository.save(model);
+	public void removePermission(String modelId, PermissionRequestBody body) {
+		if (body.getSysroles() != null) {
+			body.getSysroles().forEach(f -> {
+				this.sysroleModelRepository.deleteById(
+						new SysroleModelId(modelId, f.getSysroleId(), f.getPermissionType(), f.getPermission()));
+			});
+		}
+
+		if (body.getUsernames() != null) {
+			body.getUsernames().forEach(f -> {
+				this.userModelRepository.deleteById(
+						new UserModelId(modelId, f.getUsername(), f.getPermissionType(), f.getPermission()));
+			});
+		}
 	}
 
 	@Transactional
@@ -106,17 +126,21 @@ public class ModelServiceImpl implements ModelService {
 	}
 
 	@Override
-	public void addPermission(String modelId, PermissionToken permissionToken) {
-		Model model = modelRepository.findById(modelId).get();
-		SparrowPermissionToken sparrowPermissionToken = model.getSparrowPermissionToken();
-		if (sparrowPermissionToken == null) {
-			sparrowPermissionToken = new SparrowPermissionToken(permissionToken);
-			model.setSparrowPermissionToken(permissionTokenRepository.save(sparrowPermissionToken));
-			modelRepository.save(model);
-		} else {
-			sparrowPermissionToken.setPermissionToken(permissionToken);
-			permissionTokenRepository.save(sparrowPermissionToken);
+	public void addPermission(String modelId, PermissionRequestBody body) {
+		if (body.getSysroles() != null) {
+			body.getSysroles().forEach(f -> {
+				this.sysroleModelRepository
+						.save(new SysroleModel(modelId, f.getSysroleId(), f.getPermissionType(), f.getPermission()));
+			});
 		}
+
+		if (body.getUsernames() != null) {
+			body.getUsernames().forEach(f -> {
+				this.userModelRepository
+						.save(new UserModel(modelId, f.getUsername(), f.getPermissionType(), f.getPermission()));
+			});
+		}
+
 	}
 
 	@Override
@@ -136,6 +160,17 @@ public class ModelServiceImpl implements ModelService {
 			models.add(model);
 		});
 		return models;
+	}
+
+	@Override
+	public ModelPermissionResponseBody permissions(String modelId) {
+		ModelPermissionResponseBody permission = new ModelPermissionResponseBody();
+		permission.getSysroles()
+				.addAll(this.sysroleModelRepository.findByIdModelId(modelId, Pageable.unpaged()).getContent());
+		permission.getUsernames()
+				.addAll(this.userModelRepository.findByIdModelId(modelId, Pageable.unpaged()).getContent());
+		return permission;
+
 	}
 
 }

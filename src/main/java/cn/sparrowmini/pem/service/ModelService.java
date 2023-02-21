@@ -5,7 +5,10 @@ import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,9 +17,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import cn.sparrowmini.pem.model.Model;
-import cn.sparrowmini.pem.model.token.PermissionToken;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -55,12 +58,19 @@ public interface ModelService {
 	@Operation(summary = "设置模型权限")
 	@PostMapping("/{modelId}/permissions")
 	@ResponseBody
-	public void addPermission(@PathVariable("modelId") String modelId, @RequestBody PermissionToken permissionToken);
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public void addPermission(@PathVariable String modelId, @RequestBody PermissionRequestBody body);
+	
+	@Operation(summary = "模型权限列表")
+	@GetMapping(value = "/{modelId}/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ModelPermissionResponseBody permissions(@PathVariable String modelId);
 
 	@Operation(summary = "删除模型权限")
-	@PutMapping("/{modelId}/permissions/delete")
+	@DeleteMapping("/{modelId}/permissions")
 	@ResponseBody
-	public void removePermission(@PathVariable("modelId") String modelId);
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public void removePermission(@PathVariable String modelId, @RequestBody PermissionRequestBody body);
 
 	@Operation(summary = "浏览模型")
 	@GetMapping("/entities")
