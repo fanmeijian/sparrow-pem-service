@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 
 import cn.sparrowmini.common.CurrentUser;
 import cn.sparrowmini.pem.model.Scope;
-import cn.sparrowmini.pem.model.UserScope;
-import cn.sparrowmini.pem.model.UserScope.UserScopePK;
 import cn.sparrowmini.pem.model.constant.PermissionEnum;
+import cn.sparrowmini.pem.model.relation.UserScope;
+import cn.sparrowmini.pem.model.relation.UserScope.UserScopePK;
 import cn.sparrowmini.pem.service.PermissionService;
 import cn.sparrowmini.pem.service.ScopePermission;
 import cn.sparrowmini.pem.service.exception.NoPermissionException;

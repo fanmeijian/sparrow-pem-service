@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import cn.sparrowmini.pem.model.ModelAttribute.ModelAttributePK;
-import cn.sparrowmini.pem.model.UserModelAttribute;
-import cn.sparrowmini.pem.model.UserModelAttribute.UserModelAttributeId;
+import cn.sparrowmini.pem.model.relation.UserModelAttribute;
+import cn.sparrowmini.pem.model.relation.UserModelAttribute.UserModelAttributeId;
 
 public interface UserModelAttributeRepository extends JpaRepository<UserModelAttribute, UserModelAttributeId> {
 	Page<UserModelAttribute> findByIdAttributeId(ModelAttributePK attributeId, Pageable pageable);

@@ -17,11 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import cn.sparrowmini.pem.model.Scope;
-import cn.sparrowmini.pem.model.SysroleScope;
-import cn.sparrowmini.pem.model.SysroleScope.SysroleScopePK;
-import cn.sparrowmini.pem.model.UserScope;
-import cn.sparrowmini.pem.model.UserScope.UserScopePK;
 import cn.sparrowmini.pem.model.constant.SysPermissionTarget;
+import cn.sparrowmini.pem.model.relation.SysroleScope;
+import cn.sparrowmini.pem.model.relation.UserScope;
+import cn.sparrowmini.pem.model.relation.SysroleScope.SysroleScopePK;
+import cn.sparrowmini.pem.model.relation.UserScope.UserScopePK;
 import cn.sparrowmini.pem.service.ScopeService;
 import cn.sparrowmini.pem.service.repository.ScopeRepository;
 import cn.sparrowmini.pem.service.repository.SysroleScopeRepository;

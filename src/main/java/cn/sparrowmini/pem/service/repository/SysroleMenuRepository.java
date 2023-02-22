@@ -6,8 +6,8 @@ import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import cn.sparrowmini.pem.model.SysroleMenu;
-import cn.sparrowmini.pem.model.SysroleMenu.SysroleMenuPK;
+import cn.sparrowmini.pem.model.relation.SysroleMenu;
+import cn.sparrowmini.pem.model.relation.SysroleMenu.SysroleMenuPK;
 
 public interface SysroleMenuRepository extends JpaRepository<SysroleMenu, SysroleMenuPK> {
   Set<SysroleMenu> findByIdSysroleId(String sysroleId);

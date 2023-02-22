@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import cn.sparrowmini.pem.model.ModelAttribute.ModelAttributePK;
-import cn.sparrowmini.pem.model.SysroleModelAttribute;
-import cn.sparrowmini.pem.model.SysroleModelAttribute.SysroleModelAttributeId;
+import cn.sparrowmini.pem.model.relation.SysroleModelAttribute;
+import cn.sparrowmini.pem.model.relation.SysroleModelAttribute.SysroleModelAttributeId;
 
 public interface SysroleModelAttributeRepository extends JpaRepository<SysroleModelAttribute, SysroleModelAttributeId> {
 	Page<SysroleModelAttribute> findByIdAttributeId(ModelAttributePK attributeId, Pageable pageable);

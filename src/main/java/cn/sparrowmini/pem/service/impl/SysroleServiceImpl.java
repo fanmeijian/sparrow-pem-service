@@ -19,11 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import cn.sparrowmini.pem.model.Sysrole;
-import cn.sparrowmini.pem.model.SysroleMenu;
-import cn.sparrowmini.pem.model.SysroleMenu.SysroleMenuPK;
-import cn.sparrowmini.pem.model.UserSysrole;
-import cn.sparrowmini.pem.model.UserSysrole.UserSysrolePK;
 import cn.sparrowmini.pem.model.constant.PreserveSysroleEnum;
+import cn.sparrowmini.pem.model.relation.SysroleMenu;
+import cn.sparrowmini.pem.model.relation.UserSysrole;
+import cn.sparrowmini.pem.model.relation.SysroleMenu.SysroleMenuPK;
+import cn.sparrowmini.pem.model.relation.UserSysrole.UserSysrolePK;
 import cn.sparrowmini.pem.service.SysroleService;
 import cn.sparrowmini.pem.service.repository.SysroleMenuRepository;
 import cn.sparrowmini.pem.service.repository.SysroleRepository;

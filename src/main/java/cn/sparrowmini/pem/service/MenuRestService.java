@@ -8,16 +8,19 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import cn.sparrowmini.common.api.SparrowTree;
 import cn.sparrowmini.pem.model.Menu;
@@ -59,15 +62,17 @@ public interface MenuRestService {
 	public void addPermission(@PathVariable("menuId") String menuId, SysPermissionTarget type,
 			@NotNull @RequestBody List<String> permissions);
 
-	@PutMapping("/{menuId}/permissions/delete")
+	@DeleteMapping(value = "/{menuId}/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "取消菜单权限")
 	@ResponseBody
-	public void delPermission(@PathVariable("menuId") String menuId, SysPermissionTarget type,
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public void delPermission(@PathVariable String menuId, SysPermissionTarget type,
 			@NotNull @RequestBody List<String> permissions);
-	
-	@PutMapping("/delete")
+
+	@DeleteMapping("")
 	@Operation(summary = "删除菜单")
 	@ResponseBody
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void delete(@NotNull @RequestBody final String[] ids);
 
 	@PatchMapping(path = "/{menuId}", consumes = "application/json-patch+json")
@@ -79,8 +84,8 @@ public interface MenuRestService {
 	@GetMapping("")
 	@Operation(summary = "浏览菜单")
 	@ResponseBody
-	public Page<Menu> all(@Nullable Pageable pageable,@Nullable Menu menu);
-	
+	public Page<Menu> all(@Nullable Pageable pageable, @Nullable Menu menu);
+
 	@PatchMapping("/{menuId}/sort")
 	@Operation(summary = "菜单排序")
 	@ResponseBody

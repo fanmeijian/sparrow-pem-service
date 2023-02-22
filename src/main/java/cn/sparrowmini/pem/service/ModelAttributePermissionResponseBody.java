@@ -3,8 +3,8 @@ package cn.sparrowmini.pem.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.sparrowmini.pem.model.SysroleModelAttribute;
-import cn.sparrowmini.pem.model.UserModelAttribute;
+import cn.sparrowmini.pem.model.relation.SysroleModelAttribute;
+import cn.sparrowmini.pem.model.relation.UserModelAttribute;
 import lombok.Data;
 
 @Data

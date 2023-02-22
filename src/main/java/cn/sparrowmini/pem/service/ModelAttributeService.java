@@ -1,40 +1,41 @@
 package cn.sparrowmini.pem.service;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.lang.Nullable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import cn.sparrowmini.pem.model.ModelAttribute;
-import cn.sparrowmini.pem.model.ModelAttribute.ModelAttributePK;
-import cn.sparrowmini.pem.model.token.PermissionToken;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-public interface ModelAttributeService extends ModelAttributeRestService{
+@Tag(name = "datamodel", description = "数据模型服务")
+@RequestMapping("/models")
+public interface ModelAttributeService {
 
-	public Page<ModelAttribute> all(@Nullable Pageable pageable, @Nullable ModelAttribute modelAttribute);
+	@Operation(summary = "属性权限列表")
+	@GetMapping(value = "/{modelId}/attributes/{attributeId}/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ModelAttributePermissionResponseBody attributePermissions(@PathVariable String modelId,
+			@PathVariable String attributeId);
 
-	public ModelAttribute create(@RequestBody ModelAttribute modelAttribute);
+	@Operation(summary = "设置属性权限")
+	@PostMapping(value = "/{modelId}/attributes/{attributeId}/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public void addPermission(@PathVariable String modelId, @PathVariable String attributeId,
+			@RequestBody PermissionRequestBody body);
 
-	public ModelAttribute get(
-			@Parameter(content = @Content(schema = @Schema(implementation = String.class)), example = "modelName_attributeName") @PathVariable("attributeId") ModelAttributePK attributePK);
+	@Operation(summary = "移除属性权限")
+	@DeleteMapping("/{modelId}/attributes/{attributeId}/permissions")
+	@ResponseBody
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public void removePermission(@PathVariable String modelId, @PathVariable String attributeId,
+			@RequestBody PermissionRequestBody body);
 
-	public ModelAttribute update(
-			@Parameter(content = @Content(schema = @Schema(implementation = String.class)), example = "modelName_attributeName") @PathVariable("attributeId") ModelAttributePK attributePK,
-			@RequestBody Map<String, Object> map);
-
-	public void addPermission(
-			@Parameter(content = @Content(schema = @Schema(implementation = String.class)), example = "modelName_attributeName") @PathVariable("attributeId") ModelAttributePK attributePK,
-			@RequestBody PermissionToken permissionToken);
-
-	public void removePermission(
-			@Parameter(content = @Content(schema = @Schema(implementation = String.class)), example = "modelName_attributeName") @PathVariable("attributeId") ModelAttributePK attributePK);
-
-	public void delete(@RequestBody List<ModelAttributePK> ids);
 }

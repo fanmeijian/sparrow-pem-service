@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.sparrowmini.pem.model.Sysrole;
-import cn.sparrowmini.pem.model.UserSysrole;
+import cn.sparrowmini.pem.model.relation.UserSysrole;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

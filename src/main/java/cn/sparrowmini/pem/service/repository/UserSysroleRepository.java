@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import cn.sparrowmini.pem.model.UserSysrole;
-import cn.sparrowmini.pem.model.UserSysrole.UserSysrolePK;
+import cn.sparrowmini.pem.model.relation.UserSysrole;
+import cn.sparrowmini.pem.model.relation.UserSysrole.UserSysrolePK;
 
 public interface UserSysroleRepository extends JpaRepository<UserSysrole, UserSysrolePK> {
 	// @Transactional(propagation=Propagation.NOT_SUPPORTED)

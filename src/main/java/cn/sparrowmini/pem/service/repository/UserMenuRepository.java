@@ -6,8 +6,8 @@ import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import cn.sparrowmini.pem.model.UserMenu;
-import cn.sparrowmini.pem.model.UserMenu.UserMenuPK;
+import cn.sparrowmini.pem.model.relation.UserMenu;
+import cn.sparrowmini.pem.model.relation.UserMenu.UserMenuPK;
 
 public interface UserMenuRepository extends JpaRepository<UserMenu, UserMenuPK> {
 

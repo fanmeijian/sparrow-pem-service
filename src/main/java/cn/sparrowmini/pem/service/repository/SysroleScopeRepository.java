@@ -4,8 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import cn.sparrowmini.pem.model.SysroleScope;
-import cn.sparrowmini.pem.model.SysroleScope.SysroleScopePK;
+import cn.sparrowmini.pem.model.relation.SysroleScope;
+import cn.sparrowmini.pem.model.relation.SysroleScope.SysroleScopePK;
 
 public interface SysroleScopeRepository extends JpaRepository<SysroleScope, SysroleScopePK> {
 
