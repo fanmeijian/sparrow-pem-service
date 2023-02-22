@@ -15,6 +15,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ import cn.sparrowmini.pem.model.SysroleModel;
 import cn.sparrowmini.pem.model.SysroleModel.SysroleModelId;
 import cn.sparrowmini.pem.model.UserModel;
 import cn.sparrowmini.pem.model.UserModel.UserModelId;
+import cn.sparrowmini.pem.model.common.ModelPermission;
 import cn.sparrowmini.pem.service.ModelPermissionResponseBody;
 import cn.sparrowmini.pem.service.ModelService;
 import cn.sparrowmini.pem.service.PermissionRequestBody;
@@ -104,8 +106,27 @@ public class ModelServiceImpl implements ModelService {
 
 	@Override
 	public Page<Model> models(Pageable pageable, Model model) {
-		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING);
-		return modelRepository.findAll(Example.of(model, matcher), pageable);
+//		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING);
+//		return modelRepository.findAll(Example.of(model, matcher), pageable);
+
+		Set<EntityType<?>> entityTypes = entityManager.getMetamodel().getEntities();
+		List<Model> models = new ArrayList<Model>();
+		entityTypes.forEach(e -> {
+			if (e.getJavaType().isAnnotationPresent(ModelPermission.class)) {
+				Model model1 = new Model(e.getJavaType().getName());
+
+				List<ModelAttribute> attributes = new ArrayList<ModelAttribute>();
+				e.getAttributes().forEach(a -> {
+					ModelAttribute modelAttribute = new ModelAttribute(e.getJavaType().getName(), a.getName(),
+							a.getJavaType().getName());
+					attributes.add(modelAttribute);
+				});
+				model1.setModelAttributes(attributes);
+				models.add(model1);
+			}
+
+		});
+		return new PageImpl<>(models);
 	}
 
 	@Override

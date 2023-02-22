@@ -1,4 +1,4 @@
-package cn.sparrowmini.pem.service.impl;
+package cn.sparrowmini.pem.service.listener;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
@@ -14,13 +14,16 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class HibernateListener {
 	private final EntityManagerFactory entityManagerFactory;
-	private final InsertEventListenerClass insertEventListenerClass;
+	private final InsertEventListener insertEventListenerClass;
+	private final UpdateEventListener updateEventListener;
+	private final DeleteEventListener deleteEventListener;
 
 	@PostConstruct
 	private void init() {
 		SessionFactoryImpl sessionFactory = entityManagerFactory.unwrap(SessionFactoryImpl.class);
 		EventListenerRegistry registry = sessionFactory.getServiceRegistry().getService(EventListenerRegistry.class);
-		registry.getEventListenerGroup(EventType.PRE_INSERT).appendListener(insertEventListenerClass);
-//		registry.getEventListenerGroup(EventType.POST_UPDATE).appendListener(UpdateEventListenerClass);
+		registry.getEventListenerGroup(EventType.PRE_INSERT).prependListener(insertEventListenerClass);
+		registry.getEventListenerGroup(EventType.PRE_UPDATE).prependListener(updateEventListener);
+		registry.getEventListenerGroup(EventType.PRE_DELETE).prependListener(deleteEventListener);
 	}
 }
