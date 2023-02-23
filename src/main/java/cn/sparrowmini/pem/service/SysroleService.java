@@ -5,15 +5,17 @@ import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import cn.sparrowmini.pem.model.Sysrole;
 import cn.sparrowmini.pem.model.relation.UserSysrole;
@@ -48,8 +50,9 @@ public interface SysroleService {
 	public Sysrole update(@PathVariable("sysroleId") String sysroleId, @RequestBody Map<String,Object> map);
 
 	@Operation(summary = "删除角色")
-	@PutMapping("/delete")
+	@DeleteMapping("")
 	@ResponseBody
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void delete( @RequestBody List<String> ids);
 
 	@Operation(summary = "授权用户")
@@ -58,8 +61,9 @@ public interface SysroleService {
 	public void addPermissions(@PathVariable("sysroleId") String sysroleId, @RequestBody List<String> usernames);
 
 	@Operation(summary = "取消用户授权")
-	@PutMapping("/{sysroleId}/users/delete")
+	@DeleteMapping("/{sysroleId}/users")
 	@ResponseBody
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void removePermissions(@PathVariable("sysroleId") String sysroleId, @RequestBody List<String> usernames);
 	
 	@Operation(summary = "角色用户列表")

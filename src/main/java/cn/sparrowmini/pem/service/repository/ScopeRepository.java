@@ -6,4 +6,6 @@ import cn.sparrowmini.pem.model.Scope;
 
 public interface ScopeRepository extends JpaRepository<Scope, String> {
 
+	Scope findByCode(String code);
+
 }
