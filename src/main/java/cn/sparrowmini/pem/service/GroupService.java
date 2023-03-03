@@ -1,5 +1,6 @@
 package cn.sparrowmini.pem.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import cn.sparrowmini.common.api.SparrowTree;
 import cn.sparrowmini.pem.model.Group;
 import cn.sparrowmini.pem.model.constant.GroupTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +39,7 @@ public interface GroupService {
 	@ResponseBody
 	@PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public String create(Group group);
+	public String create(@RequestBody Group group);
 
 	@Operation(summary = "更新群组")
 	@ResponseBody
@@ -73,5 +75,15 @@ public interface GroupService {
 	@ResponseBody
 	@GetMapping(value = "/{groupId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<?> members(@PathVariable String groupId, GroupTypeEnum type, Pageable pageable);
+	
+	@Operation(summary = "群组树")
+	@ResponseBody
+	@GetMapping(value = "/{groupId}/tree", produces = MediaType.APPLICATION_JSON_VALUE)
+	public SparrowTree<Group, String> expandTree(@PathVariable String groupId);
+	
+	@Operation(summary = "群组展开列表")
+	@ResponseBody
+	@GetMapping(value = "/{groupId}/flat", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Group> expandFlat(@PathVariable String groupId);
 
 }

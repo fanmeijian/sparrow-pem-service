@@ -10,6 +10,7 @@ import cn.sparrowmini.pem.model.Sysrole;
 import cn.sparrowmini.pem.model.relation.GroupUser;
 import cn.sparrowmini.pem.model.relation.UserSysrole;
 import cn.sparrowmini.pem.model.token.UserToken;
+import cn.sparrowmini.pem.service.UserService;
 import cn.sparrowmini.pem.service.repository.GroupUserRepository;
 import cn.sparrowmini.pem.service.repository.SysroleRepository;
 import cn.sparrowmini.pem.service.repository.UserMenuRepository;
@@ -18,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class UserService {
+public class UserServiceImpl implements UserService{
 
 	@Autowired
 	UserMenuRepository userMenuRepository;
@@ -30,6 +31,7 @@ public class UserService {
 	@Autowired
 	private GroupUserRepository groupUserRepository;
 
+	@Override
 	public List<Sysrole> getSysroles(String username) {
 		List<Sysrole> sysroles = new ArrayList<Sysrole>();
 		userSysroleRepository.findByIdUsername(username).forEach(f -> {
@@ -38,10 +40,12 @@ public class UserService {
 		return sysroles;
 	}
 
+	@Override
 	public List<UserSysrole> getUserSysroles(String username) {
 		return userSysroleRepository.findByIdUsername(username);
 	}
 
+	@Override
 	public UserToken userToken(String username) {
 		UserToken userToken = new UserToken();
 		userToken.setSysroles(this.userSysroleRepository.findByIdUsername(username));

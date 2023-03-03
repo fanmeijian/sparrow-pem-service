@@ -1,5 +1,6 @@
 package cn.sparrowmini.pem.service.impl;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.transaction.Transactional;
@@ -10,19 +11,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import cn.sparrowmini.common.api.SparrowTree;
 import cn.sparrowmini.pem.model.Group;
 import cn.sparrowmini.pem.model.constant.GroupTypeEnum;
 import cn.sparrowmini.pem.model.relation.GroupRelation;
-import cn.sparrowmini.pem.model.relation.GroupSysrole;
-import cn.sparrowmini.pem.model.relation.GroupUser;
 import cn.sparrowmini.pem.model.relation.GroupRelation.GroupRelationId;
+import cn.sparrowmini.pem.model.relation.GroupSysrole;
 import cn.sparrowmini.pem.model.relation.GroupSysrole.GroupSysrolePK;
+import cn.sparrowmini.pem.model.relation.GroupUser;
 import cn.sparrowmini.pem.model.relation.GroupUser.GroupUserId;
 import cn.sparrowmini.pem.service.GroupService;
-import cn.sparrowmini.pem.service.repository.PemGroupRelationRepository;
-import cn.sparrowmini.pem.service.repository.PemGroupRepository;
 import cn.sparrowmini.pem.service.repository.GroupSysroleRepository;
 import cn.sparrowmini.pem.service.repository.GroupUserRepository;
+import cn.sparrowmini.pem.service.repository.PemGroupRelationRepository;
+import cn.sparrowmini.pem.service.repository.PemGroupRepository;
 
 @Service("pemGroupServiceImpl")
 public class GroupServiceImpl implements GroupService {
@@ -116,15 +118,46 @@ public class GroupServiceImpl implements GroupService {
 	public Page<?> members(String groupId, GroupTypeEnum type, Pageable pageable) {
 		switch (type) {
 		case USER:
-			return (Page<?>) this.groupUserRepository.findAll();
+			return (Page<?>) this.groupUserRepository.findByIdGroupId(groupId, pageable);
 		case SYSROLE:
-			return (Page<?>) this.groupSysroleRepository.findAll();
+			return (Page<?>) this.groupSysroleRepository.findByIdGroupId(groupId, pageable);
 		case GROUP:
-			return (Page<?>) this.groupRelationRepository.findAll();
+			return (Page<?>) this.groupRelationRepository.findByIdGroupId(groupId, pageable);
 		default:
 			break;
 		}
 		return null;
+	}
+
+	@Override
+	public SparrowTree<Group, String> expandTree(String groupId) {
+		SparrowTree<Group, String> myTree = new SparrowTree<Group, String>(
+				this.groupRepository.findById(groupId).orElse(null));
+		this.buildTree(myTree);
+		return myTree;
+	}
+
+	@Override
+	public List<Group> expandFlat(String groupId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void buildTree(SparrowTree<Group, String> myTree) {
+
+		this.groupRelationRepository
+				.findByIdParentId(myTree.getMe() == null ? null : myTree.getMe().getId(), Pageable.unpaged()).toList()
+				.forEach(f -> {
+					SparrowTree<Group, String> leaf = new SparrowTree<Group, String>(
+							this.groupRepository.findById(f.getId().getGroupId()).get());
+					// 防止死循环
+					if (this.groupRelationRepository
+							.findById(new GroupRelationId(f.getId().getParentId(), f.getId().getGroupId()))
+							.orElse(null) == null)
+						buildTree(leaf);
+
+					myTree.getChildren().add(leaf);
+				});
 	}
 
 }

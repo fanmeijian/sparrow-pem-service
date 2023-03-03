@@ -30,6 +30,7 @@ import cn.sparrowmini.pem.model.relation.SysroleMenu.SysroleMenuPK;
 import cn.sparrowmini.pem.model.relation.UserMenu.UserMenuPK;
 import cn.sparrowmini.pem.service.MenuService;
 import cn.sparrowmini.pem.service.SysroleService;
+import cn.sparrowmini.pem.service.UserService;
 import cn.sparrowmini.pem.service.repository.MenuRepository;
 import cn.sparrowmini.pem.service.repository.SysroleMenuRepository;
 import cn.sparrowmini.pem.service.repository.UserMenuRepository;

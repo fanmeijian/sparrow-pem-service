@@ -34,9 +34,6 @@ public class ModelPermissionServiceImpl implements ModelPermissionService {
 	@Autowired
 	private GroupSysroleRepository groupSysroleRepository;
 
-	@Autowired
-	private UserService userService;
-
 	@Override
 	public boolean hasPermission(String modelId, PermissionEnum permission, String username) {
 
