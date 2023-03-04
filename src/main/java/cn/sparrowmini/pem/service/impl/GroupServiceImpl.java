@@ -1,5 +1,6 @@
 package cn.sparrowmini.pem.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,7 +86,7 @@ public class GroupServiceImpl implements GroupService {
 				this.groupSysroleRepository.save(new GroupSysrole(groupId, id));
 				break;
 			case GROUP:
-				this.groupRelationRepository.save(new GroupRelation(groupId, id));
+				this.groupRelationRepository.save(new GroupRelation(id, groupId));
 				break;
 			default:
 				break;
@@ -122,7 +123,7 @@ public class GroupServiceImpl implements GroupService {
 		case SYSROLE:
 			return (Page<?>) this.groupSysroleRepository.findByIdGroupId(groupId, pageable);
 		case GROUP:
-			return (Page<?>) this.groupRelationRepository.findByIdGroupId(groupId, pageable);
+			return (Page<?>) this.groupRelationRepository.findByIdParentId(groupId, pageable);
 		default:
 			break;
 		}
@@ -138,9 +139,44 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public List<Group> expandFlat(String groupId) {
-		// TODO Auto-generated method stub
+	public List<?> expandFlat(String groupId, GroupTypeEnum type) {
+		List<Group> groups = new ArrayList<>();
+		this.getFlatGroups(groupId, groups);
+		switch (type) {
+		case GROUP:
+			return groups;
+		case SYSROLE:
+			// get sysrole
+			List<GroupSysrole> sysroles = new ArrayList<>();
+			sysroles.addAll(this.groupSysroleRepository.findByIdGroupId(groupId, Pageable.unpaged()).toList());
+			groups.forEach(group -> {
+				sysroles.addAll(
+						this.groupSysroleRepository.findByIdGroupId(group.getId(), Pageable.unpaged()).toList());
+			});
+			return sysroles;
+		case USER:
+			List<GroupUser> users = new ArrayList<>();
+			users.addAll(this.groupUserRepository.findByIdGroupId(groupId, Pageable.unpaged()).toList());
+			groups.forEach(group -> {
+				users.addAll(this.groupUserRepository.findByIdGroupId(group.getId(), Pageable.unpaged()).toList());
+			});
+			return users;
+		default:
+			break;
+		}
 		return null;
+	}
+
+	private void getFlatGroups(String parentId, List<Group> members) {
+		this.groupRelationRepository.findByIdParentId(parentId, Pageable.unpaged()).toList().forEach(groupRelation -> {
+			members.add(this.groupRepository.findById(groupRelation.getId().getGroupId()).get());
+			if (this.groupRelationRepository.findById(
+					new GroupRelationId(groupRelation.getId().getParentId(), groupRelation.getId().getGroupId()))
+					.orElse(null) == null) {
+				this.getFlatGroups(groupRelation.getId().getGroupId(), members);
+			}
+
+		});
 	}
 
 	public void buildTree(SparrowTree<Group, String> myTree) {

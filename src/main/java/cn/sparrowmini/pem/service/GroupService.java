@@ -84,6 +84,6 @@ public interface GroupService {
 	@Operation(summary = "群组展开列表")
 	@ResponseBody
 	@GetMapping(value = "/{groupId}/flat", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Group> expandFlat(@PathVariable String groupId);
+	public List<?> expandFlat(@PathVariable String groupId, GroupTypeEnum type);
 
 }
