@@ -24,6 +24,8 @@ import cn.sparrowmini.pem.model.relation.SysroleMenu;
 import cn.sparrowmini.pem.model.relation.UserSysrole;
 import cn.sparrowmini.pem.model.relation.SysroleMenu.SysroleMenuPK;
 import cn.sparrowmini.pem.model.relation.UserSysrole.UserSysrolePK;
+import cn.sparrowmini.pem.service.ScopePermission;
+import cn.sparrowmini.pem.service.ScopeTestEnum;
 import cn.sparrowmini.pem.service.SysroleService;
 import cn.sparrowmini.pem.service.repository.SysroleMenuRepository;
 import cn.sparrowmini.pem.service.repository.SysroleRepository;
@@ -58,6 +60,7 @@ public class SysroleServiceImpl extends AbstractPreserveScope implements Sysrole
 		return userSysroleRepository.findByIdSysroleId(sysroleId, pageable);
 	}
 
+	@ScopePermission(scope = "",name = ScopeTestEnum.Org)
 	public void addMenus(String sysroleId, List<String> menuIds) {
 		Set<SysroleMenu> sysroleMenus = new HashSet<SysroleMenu>();
 		menuIds.forEach(f -> {

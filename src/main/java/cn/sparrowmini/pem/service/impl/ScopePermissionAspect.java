@@ -53,6 +53,6 @@ public class ScopePermissionAspect {
 				return joinPoint.proceed();
 			}
 		}
-		throw new NoPermissionException("没有权限: " + scopePermission.scope() + PermissionEnum.EXECUTE);
+		throw new NoPermissionException("没有权限: " + scopePermission.name() + PermissionEnum.EXECUTE);
 	}
 }
