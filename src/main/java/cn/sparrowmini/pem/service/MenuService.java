@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import cn.sparrowmini.common.api.SparrowTree;
+import cn.sparrowmini.common.SparrowTree;
 import cn.sparrowmini.pem.model.Menu;
 import cn.sparrowmini.pem.model.Sysrole;
 import cn.sparrowmini.pem.model.common.MenuPermission;

@@ -3,6 +3,7 @@ package cn.sparrowmini.pem.service;
 import java.util.List;
 import java.util.Map;
 
+import cn.sparrowmini.common.SparrowTree;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import cn.sparrowmini.common.api.SparrowTree;
 import cn.sparrowmini.pem.model.Group;
 import cn.sparrowmini.pem.model.constant.GroupTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;

@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import cn.sparrowmini.common.api.SparrowTree;
+import cn.sparrowmini.common.SparrowTree;
 import cn.sparrowmini.pem.model.Group;
 import cn.sparrowmini.pem.model.constant.GroupTypeEnum;
 import cn.sparrowmini.pem.model.relation.GroupRelation;

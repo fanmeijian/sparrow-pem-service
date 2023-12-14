@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import cn.sparrowmini.common.api.AbstractTreeService;
-import cn.sparrowmini.common.api.SparrowTree;
+import cn.sparrowmini.common.SparrowTree;
 import cn.sparrowmini.pem.model.Menu;
 
 @Service

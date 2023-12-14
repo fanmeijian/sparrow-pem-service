@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import cn.sparrowmini.common.api.SortService;
-import cn.sparrowmini.common.api.SparrowTree;
+import cn.sparrowmini.common.SparrowTree;
 import cn.sparrowmini.common.api.TreeService;
 import cn.sparrowmini.pem.model.Menu;
 import cn.sparrowmini.pem.model.Sysrole;
