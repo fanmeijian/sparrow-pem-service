@@ -16,5 +16,5 @@ import java.lang.annotation.ElementType;
 public @interface ScopePermission {
 	String username() default "$curUser";
 	String scope();
-	ScopeTestEnum name();
+	String name();
 }

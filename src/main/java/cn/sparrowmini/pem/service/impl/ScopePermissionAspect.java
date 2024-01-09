@@ -4,6 +4,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import cn.sparrowmini.common.CurrentUser;
@@ -18,6 +19,7 @@ import cn.sparrowmini.pem.service.repository.SysroleScopeRepository;
 import cn.sparrowmini.pem.service.repository.UserScopeRepository;
 import cn.sparrowmini.pem.service.repository.UserSysroleRepository;
 import lombok.extern.slf4j.Slf4j;
+import cn.sparrowmini.pem.model.Scope;
 
 @Slf4j
 @Aspect
@@ -38,8 +40,12 @@ public class ScopePermissionAspect {
 	@Around("@annotation(scopePermission)")
 	public Object hasPermission(ProceedingJoinPoint joinPoint, ScopePermission scopePermission) throws Throwable {
 		log.debug("username {}, scope code: {}", CurrentUser.get(), scopePermission.scope());
-		String username = CurrentUser.get();
-		String scopeId = this.scopeRepository.findByCode(scopePermission.scope()).getId();
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Scope scope = this.scopeRepository.findByCode(scopePermission.scope());
+		String scopeId = null;
+		if (scope != null) {
+			scopeId = scope.getId();
+		}
 
 		// check user scope permission
 		if (this.userScopeRepository.findById(new UserScopePK(username, scopeId)).orElse(null) != null) {
@@ -53,6 +59,6 @@ public class ScopePermissionAspect {
 				return joinPoint.proceed();
 			}
 		}
-		throw new NoPermissionException("没有权限: " + scopePermission.name() + PermissionEnum.EXECUTE);
+		throw new NoPermissionException(String.join("-",username,"没有权限",scopePermission.name(),scopePermission.scope()));
 	}
 }

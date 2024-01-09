@@ -60,7 +60,7 @@ public class SysroleServiceImpl extends AbstractPreserveScope implements Sysrole
 		return userSysroleRepository.findByIdSysroleId(sysroleId, pageable);
 	}
 
-	@ScopePermission(scope = "",name = ScopeTestEnum.Org)
+	@ScopePermission(scope = "admin:sysrole:menu:add",name = "添加角色菜单")
 	public void addMenus(String sysroleId, List<String> menuIds) {
 		Set<SysroleMenu> sysroleMenus = new HashSet<SysroleMenu>();
 		menuIds.forEach(f -> {

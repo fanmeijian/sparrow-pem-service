@@ -22,6 +22,7 @@ import cn.sparrowmini.pem.model.relation.SysroleScope;
 import cn.sparrowmini.pem.model.relation.UserScope;
 import cn.sparrowmini.pem.model.relation.SysroleScope.SysroleScopePK;
 import cn.sparrowmini.pem.model.relation.UserScope.UserScopePK;
+import cn.sparrowmini.pem.service.ScopePermission;
 import cn.sparrowmini.pem.service.ScopeService;
 import cn.sparrowmini.pem.service.repository.ScopeRepository;
 import cn.sparrowmini.pem.service.repository.SysroleScopeRepository;
@@ -44,7 +45,8 @@ public class ScopeServiceImpl extends AbstractPreserveScope implements ScopeServ
 
 	@Override
 	@ResponseStatus(value = HttpStatus.CREATED)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_CREATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(scope = "admin:scope:create",name = "创建scope")
+//	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_CREATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
 	public Scope create(Scope scope) {
 		return scopeRepository.save(scope);
 	}
