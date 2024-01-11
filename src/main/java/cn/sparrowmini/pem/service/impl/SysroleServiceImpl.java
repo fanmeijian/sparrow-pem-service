@@ -21,11 +21,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import cn.sparrowmini.pem.model.Sysrole;
 import cn.sparrowmini.pem.model.constant.PreserveSysroleEnum;
 import cn.sparrowmini.pem.model.relation.SysroleMenu;
-import cn.sparrowmini.pem.model.relation.UserSysrole;
 import cn.sparrowmini.pem.model.relation.SysroleMenu.SysroleMenuPK;
+import cn.sparrowmini.pem.model.relation.UserSysrole;
 import cn.sparrowmini.pem.model.relation.UserSysrole.UserSysrolePK;
 import cn.sparrowmini.pem.service.ScopePermission;
-import cn.sparrowmini.pem.service.ScopeTestEnum;
 import cn.sparrowmini.pem.service.SysroleService;
 import cn.sparrowmini.pem.service.repository.SysroleMenuRepository;
 import cn.sparrowmini.pem.service.repository.SysroleRepository;
@@ -120,7 +119,7 @@ public class SysroleServiceImpl extends AbstractPreserveScope implements Sysrole
 
 	@Override
 	@ResponseStatus(code = HttpStatus.CREATED)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_SYSROLE_CREATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(scope = "admin:sysrole:add",name = "新增角色")
 	public Sysrole create(Sysrole sysrole) {
 		return sysroleRepository.save(sysrole);
 	}

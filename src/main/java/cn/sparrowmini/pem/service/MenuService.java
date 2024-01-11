@@ -100,6 +100,9 @@ public interface MenuService {
 
 	public SparrowTree<Menu, String> getTreeBySysroleId(@NotNull @RequestParam("sysroleId") String sysroleId);
 
+	@GetMapping("/my")
+	@Operation(summary = "我的菜单")
+	@ResponseBody
 	public SparrowTree<Menu, String> getMyTree(Principal principal);
 
 	public List<Sysrole> getSysroles(@PathVariable("menuId") String menuId);

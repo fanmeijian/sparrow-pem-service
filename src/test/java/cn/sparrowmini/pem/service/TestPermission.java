@@ -1,20 +1,48 @@
 package cn.sparrowmini.pem.service;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import cn.sparrowmini.pem.model.Scope;
+import cn.sparrowmini.pem.model.Sysrole;
+import cn.sparrowmini.pem.model.relation.UserScope;
 import cn.sparrowmini.pem.service.impl.SysroleServiceImpl;
+import cn.sparrowmini.pem.service.repository.ScopeRepository;
+import cn.sparrowmini.pem.service.repository.UserScopeRepository;
 
 @SpringBootTest
 public class TestPermission {
+
+	private final static String USERNAME = "admin";
+
 	@Autowired
 	private SysroleServiceImpl sysroleService;
 
+	@Autowired
+	private ScopeRepository scopeRepository;
+
+	@Autowired
+	private UserScopeRepository userScopeRepository;
+
+	@BeforeEach
+	public void init() {
+		Scope scope = this.scopeRepository.save(new Scope("admin:sysrole:menu:add", "admin:sysrole:menu:add"));
+		this.userScopeRepository.save(new UserScope(USERNAME, scope.getId()));
+
+		scope = this.scopeRepository.save(new Scope("新增角色", "admin:sysrole:add"));
+		this.userScopeRepository.save(new UserScope(USERNAME, scope.getId()));
+
+	}
+
 	@Test
-	@WithMockUser(username="admin",roles={"USER","ADMIN"})
+	@WithMockUser(username = USERNAME, roles = { "USER", "ADMIN" })
 	public void test() {
-		this.sysroleService.addMenus("",null);
+		Object savedObject = this.sysroleService.create(new Sysrole("test", "test"));
+		assertNotNull(savedObject);
 	}
 }

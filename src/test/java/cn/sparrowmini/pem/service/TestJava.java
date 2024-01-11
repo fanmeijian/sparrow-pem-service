@@ -1,3 +1,4 @@
+package cn.sparrowmini.pem.service;
 import cn.sparrowmini.pem.service.ScopeTestEnum;
 
 public class TestJava {
