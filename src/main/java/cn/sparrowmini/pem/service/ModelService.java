@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,24 +21,24 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/models")
 public interface ModelService {
 
-	@Operation(summary = "浏览模型")
+	@Operation(summary = "浏览模型", operationId = "models")
 	@GetMapping("")
 	@ResponseBody
 	public Page<Model> models(@Nullable Pageable pageable, @Nullable Model model);
 
-	@Operation(summary = "设置模型权限")
+	@Operation(summary = "设置模型权限",operationId = "addModelPermissions")
 	@PostMapping("/{modelId}/permissions")
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public void addPermission(@PathVariable String modelId, @RequestBody PermissionRequestBody body);
 
-	@Operation(summary = "模型权限列表")
+	@Operation(summary = "模型权限列表", operationId = "modelPermissions")
 	@GetMapping(value = "/{modelId}/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ModelPermissionResponseBody permissions(@PathVariable String modelId);
 
-	@Operation(summary = "删除模型权限")
-	@DeleteMapping("/{modelId}/permissions")
+	@Operation(summary = "删除模型权限", operationId = "removeModelPermissions")
+	@PostMapping("/{modelId}/permissions/remove")
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void removePermission(@PathVariable String modelId, @RequestBody PermissionRequestBody body);

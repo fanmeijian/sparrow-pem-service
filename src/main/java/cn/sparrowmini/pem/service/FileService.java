@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,54 +27,54 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/files")
 public interface FileService {
 	@PostMapping("")
-	@Operation(summary = "新增功能")
+	@Operation(summary = "新增文件", operationId = "newFile")
 	@ResponseBody
 	public SparrowFile create(@RequestBody SparrowFile sparrowApi);
 
 	@PatchMapping("/{SparrowFileId}")
-	@Operation(summary = "更新功能")
+	@Operation(summary = "更新文件", operationId = "updateFile")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = SparrowFile.class)))
 	@ResponseBody
-	public SparrowFile update(@PathVariable("SparrowFileId") String SparrowFileId, @RequestBody Map<String, Object> map);
+	public SparrowFile update(@PathVariable("SparrowFileId") String SparrowFileId,
+			@RequestBody Map<String, Object> map);
 
 	@GetMapping("/{SparrowFileId}")
-	@Operation(summary = "获取功能详情")
+	@Operation(summary = "文件详情", operationId = "file")
 	@ResponseBody
 	public SparrowFile get(@PathVariable("SparrowFileId") String id);
 
-	@DeleteMapping("")
-	@Operation(summary = "删除功能")
+	@PostMapping("/delete")
+	@Operation(summary = "删除文件", operationId = "deleteFiles")
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void delete(@RequestBody List<String> ids);
 
 	@GetMapping("")
-	@Operation(summary = "浏览功能")
+	@Operation(summary = "浏览文件", operationId = "files")
 	@ResponseBody
 	public Page<SparrowFile> all(@Nullable Pageable pageable, @Nullable SparrowFile SparrowFile);
 
 	@GetMapping("/preserve")
-	@Operation(summary = "浏览预置功能")
+	@Operation(summary = "浏览预置功能", operationId = "preserveFile")
 	@ResponseBody
 	public List<String> preserveScopes();
 
 	@GetMapping("/{SparrowFileId}/permissions")
-	@Operation(summary = "可访问权限列表")
+	@Operation(summary = "可访问权限列表", operationId = "filePermissions")
 	@ResponseBody
 	public Page<?> getPermissions(@PathVariable("SparrowFileId") String SparrowFileId, SysPermissionTarget type,
 			@Nullable Pageable pageable);
 
 	@PostMapping("/{SparrowFileId}/permissions")
-	@Operation(summary = "增加授权")
+	@Operation(summary = "增加授权", operationId = "addFilePermissions")
 	@ResponseBody
 	public void addPermissions(@PathVariable("SparrowFileId") String SparrowFileId, SysPermissionTarget type,
 			@RequestBody List<?> ids);
 
-	@DeleteMapping("/{SparrowFileId}/permissions")
-	@Operation(summary = "移除授权")
+	@PostMapping("/{SparrowFileId}/permissions/remove")
+	@Operation(summary = "移除授权", operationId = "removeFilePermissions")
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	public void removePermissions(
-			@PathVariable("SparrowFileId") String SparrowFileId, SysPermissionTarget type,
+	public void removePermissions(@PathVariable("SparrowFileId") String SparrowFileId, SysPermissionTarget type,
 			@RequestBody List<?> ids);
 }

@@ -30,58 +30,58 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/pemgroups")
 public interface GroupService {
 	
-	@Operation(summary = "群组列表")
+	@Operation(summary = "群组列表", operationId = "groups")
 	@ResponseBody
 	@GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<Group> list(@Nullable Pageable pageable, @Nullable Group group);
 
-	@Operation(summary = "新建群组")
+	@Operation(summary = "新建群组", operationId = "newGroup")
 	@ResponseBody
 	@PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public String create(@RequestBody Group group);
 
-	@Operation(summary = "更新群组")
+	@Operation(summary = "更新群组", operationId = "updateGroup")
 	@ResponseBody
 	@PatchMapping(value = "/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Group.class)))
 	public void update(@PathVariable String groupId,@RequestBody Map<String, Object> map);
 
-	@Operation(summary = "删除群组")
+	@Operation(summary = "删除群组", operationId = "deleteGroup")
 	@ResponseBody
 	@DeleteMapping(value = "/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable String groupId);
 
-	@Operation(summary = "群组详情")
+	@Operation(summary = "群组详情", operationId = "group")
 	@ResponseBody
 	@GetMapping(value = "/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Group get(@PathVariable String groupId);
 	
-	@Operation(summary = "添加群组成员")
+	@Operation(summary = "添加群组成员", operationId = "addGroupMembers")
 	@ResponseBody
 	@PostMapping(value = "/{groupId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void addMembers(@PathVariable String groupId, GroupTypeEnum type, @RequestBody String[] ids);
 	
-	@Operation(summary = "删除群组成员")
+	@Operation(summary = "删除群组成员", operationId = "removeGroupMembers")
 	@ResponseBody
-	@DeleteMapping(value = "/{groupId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/{groupId}/members/remove", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void removeMembers(@PathVariable String groupId, GroupTypeEnum type, @RequestBody String[] ids);
 	
-	@Operation(summary = "群组成员列表")
+	@Operation(summary = "群组成员列表", operationId = "groupMembers")
 	@ResponseBody
 	@GetMapping(value = "/{groupId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<?> members(@PathVariable String groupId, GroupTypeEnum type, Pageable pageable);
 	
-	@Operation(summary = "群组树")
+	@Operation(summary = "群组树", operationId = "groupTree")
 	@ResponseBody
 	@GetMapping(value = "/{groupId}/tree", produces = MediaType.APPLICATION_JSON_VALUE)
 	public SparrowTree<Group, String> expandTree(@PathVariable String groupId);
 	
-	@Operation(summary = "群组展开列表")
+	@Operation(summary = "群组展开列表", operationId = "groupFlatternTree")
 	@ResponseBody
 	@GetMapping(value = "/{groupId}/flat", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<?> expandFlat(@PathVariable String groupId, GroupTypeEnum type);

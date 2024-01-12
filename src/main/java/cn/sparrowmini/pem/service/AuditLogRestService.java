@@ -16,12 +16,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/logs")
 public interface AuditLogRestService {
 	
-	@Operation(summary = "获取日志")
+	@Operation(summary = "获取日志", operationId = "logs")
 	@PostMapping("/{modelId}")
 	@ResponseBody
 	public List<?> getLog(@PathVariable("modelId") String className,@RequestBody String id);
 	
-	@Operation(summary = "获取日志（仅返回删除记录）")
+	@Operation(summary = "获取日志（仅返回删除记录）", operationId = "deleteLogs")
 	@GetMapping("/{modelId}")
 	@ResponseBody
 	public List<?> getLog(@PathVariable("modelId") String className);
