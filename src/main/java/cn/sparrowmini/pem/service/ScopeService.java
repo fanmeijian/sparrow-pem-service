@@ -3,6 +3,7 @@ package cn.sparrowmini.pem.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -51,7 +52,7 @@ public interface ScopeService {
 	@GetMapping("")
 	@Operation(summary = "浏览功能", operationId = "scopes")
 	@ResponseBody
-	public Page<Scope> all(@Nullable Pageable pageable, @Nullable Scope scope);
+	public Page<Scope> all(@Nullable @ParameterObject Pageable pageable, @Nullable Scope scope);
 
 	@GetMapping("/preserve")
 	@Operation(summary = "浏览预置功能", operationId = "preserveScopes")
@@ -62,7 +63,7 @@ public interface ScopeService {
 	@Operation(summary = "可访问权限列表", operationId = "scopePermissions")
 	@ResponseBody
 	public Page<?> getPermissions(@PathVariable("scopeId") String scopeId, SysPermissionTarget type,
-			@Nullable Pageable pageable);
+			@Nullable @ParameterObject Pageable pageable);
 
 	@PostMapping("/{scopeId}/permissions")
 	@Operation(summary = "增加授权", operationId = "addScopePermissions")

@@ -119,7 +119,7 @@ public class SysroleServiceImpl extends AbstractPreserveScope implements Sysrole
 
 	@Override
 	@ResponseStatus(code = HttpStatus.CREATED)
-	@ScopePermission(scope = "admin:sysrole:add",name = "新增角色")
+	@ScopePermission(scope = "admin:sysrole:create",name = "新增角色")
 	public Sysrole create(Sysrole sysrole) {
 		return sysroleRepository.save(sysrole);
 	}

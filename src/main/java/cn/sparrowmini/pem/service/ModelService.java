@@ -1,5 +1,6 @@
 package cn.sparrowmini.pem.service;
 
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public interface ModelService {
 	@Operation(summary = "浏览模型", operationId = "models")
 	@GetMapping("")
 	@ResponseBody
-	public Page<Model> models(@Nullable Pageable pageable, @Nullable Model model);
+	public Page<Model> models(@Nullable @ParameterObject Pageable pageable, @Nullable Model model);
 
 	@Operation(summary = "设置模型权限",operationId = "addModelPermissions")
 	@PostMapping("/{modelId}/permissions")

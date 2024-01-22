@@ -3,6 +3,7 @@ package cn.sparrowmini.pem.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,7 @@ public interface FileService {
 	@GetMapping("")
 	@Operation(summary = "浏览文件", operationId = "files")
 	@ResponseBody
-	public Page<SparrowFile> all(@Nullable Pageable pageable, @Nullable SparrowFile SparrowFile);
+	public Page<SparrowFile> all(@Nullable @ParameterObject Pageable pageable, @Nullable SparrowFile SparrowFile);
 
 	@GetMapping("/preserve")
 	@Operation(summary = "浏览预置功能", operationId = "preserveFile")
@@ -63,7 +64,7 @@ public interface FileService {
 	@Operation(summary = "可访问权限列表", operationId = "filePermissions")
 	@ResponseBody
 	public Page<?> getPermissions(@PathVariable("SparrowFileId") String SparrowFileId, SysPermissionTarget type,
-			@Nullable Pageable pageable);
+			@Nullable @ParameterObject Pageable pageable);
 
 	@PostMapping("/{SparrowFileId}/permissions")
 	@Operation(summary = "增加授权", operationId = "addFilePermissions")

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -85,7 +86,7 @@ public interface MenuService {
 	@GetMapping("")
 	@Operation(summary = "浏览菜单", operationId = "menus")
 	@ResponseBody
-	public Page<Menu> all(@Nullable Pageable pageable, @Nullable Menu menu);
+	public Page<Menu> all(@Nullable @ParameterObject Pageable pageable, @Nullable Menu menu);
 
 	@PatchMapping("/{menuId}/sort")
 	@Operation(summary = "菜单排序", operationId = "sortMenu")

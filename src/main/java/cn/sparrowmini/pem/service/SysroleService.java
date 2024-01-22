@@ -3,6 +3,7 @@ package cn.sparrowmini.pem.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public interface SysroleService {
 	@Operation(summary = "角色列表", operationId = "sysroles")
 	@GetMapping("")
 	@ResponseBody
-	public Page<Sysrole> all(@Nullable Pageable pageable, @Nullable Sysrole sysrole);
+	public Page<Sysrole> all(@Nullable @ParameterObject Pageable pageable, @Nullable Sysrole sysrole);
 
 	@Operation(summary = "新增角色", operationId = "newSysrole")
 	@PostMapping("")
@@ -68,6 +69,6 @@ public interface SysroleService {
 	@Operation(summary = "角色用户列表", operationId = "sysroleUsers")
 	@GetMapping("/{sysroleId}/users")
 	@ResponseBody
-	public Page<UserSysrole> getUsers(@PathVariable String sysroleId, @Nullable Pageable pageable);
+	public Page<UserSysrole> getUsers(@PathVariable String sysroleId, @Nullable @ParameterObject Pageable pageable);
 
 }

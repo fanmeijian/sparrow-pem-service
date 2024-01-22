@@ -3,7 +3,7 @@ package cn.sparrowmini.pem.service;
 import java.util.List;
 import java.util.Map;
 
-import cn.sparrowmini.common.SparrowTree;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import cn.sparrowmini.common.SparrowTree;
 import cn.sparrowmini.pem.model.Group;
 import cn.sparrowmini.pem.model.constant.GroupTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +34,7 @@ public interface GroupService {
 	@Operation(summary = "群组列表", operationId = "groups")
 	@ResponseBody
 	@GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<Group> list(@Nullable Pageable pageable, @Nullable Group group);
+	public Page<Group> list(@Nullable @ParameterObject Pageable pageable, @Nullable Group group);
 
 	@Operation(summary = "新建群组", operationId = "newGroup")
 	@ResponseBody
@@ -74,7 +75,7 @@ public interface GroupService {
 	@Operation(summary = "群组成员列表", operationId = "groupMembers")
 	@ResponseBody
 	@GetMapping(value = "/{groupId}/members", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<?> members(@PathVariable String groupId, GroupTypeEnum type, Pageable pageable);
+	public Page<?> members(@PathVariable String groupId, GroupTypeEnum type, @ParameterObject Pageable pageable);
 	
 	@Operation(summary = "群组树", operationId = "groupTree")
 	@ResponseBody
