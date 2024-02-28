@@ -1,13 +1,25 @@
 package cn.sparrowmini.pem.service.scope;
 
-public interface SysroleScope extends PreserveScope {
-	String SCOPE_ADMIN_SYSROLE_CREATE = "admin:sysrole:create";
-	String SCOPE_ADMIN_SYSROLE_READ = "admin:sysrole:read";
-	String SCOPE_ADMIN_SYSROLE_UPDATE = "admin:sysrole:update";
-	String SCOPE_ADMIN_SYSROLE_DELETE = "admin:sysrole:delete";
-	String SCOPE_ADMIN_SYSROLE_LIST = "admin:sysrole:list";
-	
-	String SCOPE_ADMIN_SYSROLE_USER_ADD = "admin:sysrole:user:add";
-	String SCOPE_ADMIN_SYSROLE_USER_REMOVE = "admin:sysrole:user:remove";
-	String SCOPE_ADMIN_SYSROLE_USER_LIST = "admin:sysrole:user:list";
+public final class SysroleScope {
+
+	private final static String TYPE = "sysrole";
+	private final static String ADMIN = "admin";
+	private final static String PREFIX = ADMIN + ":" + TYPE + ":";
+
+	private SysroleScope() {
+
+	}
+
+	public final static String CREATE = PREFIX + ScopeOpConstant.CREATE;
+	public final static String READ = PREFIX + ScopeOpConstant.READ;
+	public final static String UPDATE = PREFIX + ScopeOpConstant.UPDATE;
+	public final static String DELETE = PREFIX + ScopeOpConstant.DELETE;
+	public final static String LIST = PREFIX + ScopeOpConstant.LIST;
+
+	public final class SysroleUserScope {
+		private final static String PREFIX = ADMIN + ":" + SysroleScope.TYPE + ":user:";
+		public final static String ADD = PREFIX + ScopeOpConstant.ADD;
+		public final static String REMOVE = PREFIX + ScopeOpConstant.REMOVE;
+		public final static String LIST = PREFIX + ScopeOpConstant.LIST;
+	}
 }

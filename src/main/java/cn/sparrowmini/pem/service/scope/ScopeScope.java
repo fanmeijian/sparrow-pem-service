@@ -1,15 +1,25 @@
 package cn.sparrowmini.pem.service.scope;
 
-public interface ScopeScope extends PreserveScope {
-	String type="scope";
-	String admin="admin";
-	String SCOPE_ADMIN_CREATE = admin + ":" + type + ":create";
-	String SCOPE_ADMIN_READ = admin + ":" + type + ":read";
-	String SCOPE_ADMIN_UPDATE = admin + ":" + type + ":update";
-	String SCOPE_ADMIN_DELETE = admin + ":" + type + ":delete";
-	String SCOPE_ADMIN_LIST = admin + ":" + type + ":list";
-	
-	String SCOPE_ADMIN_PEM_ADD = admin + ":" + type + ":pem:add";
-	String SCOPE_ADMIN_PEM_REMOVE = admin + ":" + type + ":pem:remove";
-	String SCOPE_ADMIN_PEM_LIST = admin + ":" + type + ":pem:list";
+public final class ScopeScope {
+
+	private final static String TYPE = "scope";
+	private final static String ADMIN = "admin";
+	private final static String PREFIX = ADMIN + ":" + TYPE + ":";
+
+	private ScopeScope() {
+
+	}
+
+	public final static String CREATE = PREFIX + ScopeOpConstant.CREATE;
+	public final static String READ = PREFIX + ScopeOpConstant.READ;
+	public final static String UPDATE = PREFIX + ScopeOpConstant.UPDATE;
+	public final static String DELETE = PREFIX + ScopeOpConstant.DELETE;
+	public final static String LIST = PREFIX + ScopeOpConstant.LIST;
+
+	public final class ScopePemScope {
+		private final static String PREFIX = ADMIN + ":" + ScopeScope.TYPE + ":pem:";
+		public final static String ADD = PREFIX + ScopeOpConstant.ADD;
+		public final static String REMOVE = PREFIX + ScopeOpConstant.REMOVE;
+		public final static String LIST = PREFIX + ScopeOpConstant.LIST;
+	}
 }

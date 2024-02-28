@@ -23,13 +23,15 @@ import cn.sparrowmini.pem.model.relation.UserFile;
 import cn.sparrowmini.pem.model.relation.SysroleFile.SysroleFilePK;
 import cn.sparrowmini.pem.model.relation.UserFile.UserFilePK;
 import cn.sparrowmini.pem.service.FileService;
+import cn.sparrowmini.pem.service.ScopePermission;
 import cn.sparrowmini.pem.service.repository.FileRepository;
 import cn.sparrowmini.pem.service.repository.SysroleFileRepository;
 import cn.sparrowmini.pem.service.repository.UserFileReposiroty;
 import cn.sparrowmini.pem.service.scope.FileScope;
+import cn.sparrowmini.pem.service.scope.FileScopeName;
 
 @Service
-public class FileServiceImpl extends AbstractPreserveScope implements FileService, FileScope {
+public class FileServiceImpl extends AbstractPreserveScope implements FileService {
 
 	@Autowired
 	FileRepository fileRepository;
@@ -38,18 +40,15 @@ public class FileServiceImpl extends AbstractPreserveScope implements FileServic
 	@Autowired
 	UserFileReposiroty userScopeRepository;
 
-//	@Autowired
-//	PreserveScope[] preserveScopes;
-
 	@Override
 	@ResponseStatus(value = HttpStatus.CREATED)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_CREATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = FileScopeName.CREATE, scope = FileScope.CREATE)
 	public SparrowFile create(SparrowFile scope) {
 		return fileRepository.save(scope);
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_UPDATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = FileScopeName.UPDATE, scope = FileScope.UPDATE)
 	public SparrowFile update(String fileId, Map<String, Object> map) {
 		SparrowFile file = fileRepository.findById(fileId).get();
 		PatchUpdateHelper.merge(file, map);
@@ -57,27 +56,27 @@ public class FileServiceImpl extends AbstractPreserveScope implements FileServic
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_READ + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = FileScopeName.READ, scope = FileScope.READ)
 	public SparrowFile get(String id) {
 		return fileRepository.findById(id).get();
 	}
 
 	@Override
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_DELETE + "') or hasRole('ROLE_" + ROLE_SUPER_SYSADMIN + "')")
+	@ScopePermission(name = FileScopeName.DELETE, scope = FileScope.DELETE)
 	public void delete(List<String> ids) {
 		fileRepository.deleteAllByIdInBatch(ids);
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_LIST + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = FileScopeName.LIST, scope = FileScope.LIST)
 	public Page<SparrowFile> all(Pageable pageable, SparrowFile scope) {
 		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING);
 		return fileRepository.findAll(Example.of(scope, matcher), pageable);
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_LIST + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = FileScopeName.PEM_LIST, scope = FileScope.PEM_LIST)
 	public Page<?> getPermissions(String fileId, SysPermissionTarget type, Pageable pageable) {
 		Page<?> page = null;
 		switch (type) {
@@ -96,7 +95,7 @@ public class FileServiceImpl extends AbstractPreserveScope implements FileServic
 	@Override
 	@Transactional
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_ADD + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = FileScopeName.PEM_ADD, scope = FileScope.PEM_ADD)
 	public void addPermissions(String fileId, SysPermissionTarget type, List<?> ids) {
 		switch (type) {
 		case SYSROLE:
@@ -118,7 +117,7 @@ public class FileServiceImpl extends AbstractPreserveScope implements FileServic
 	@Override
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	@Transactional
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_REMOVE + "') or hasRole('ROLE_" + ROLE_SUPER_SYSADMIN + "')")
+	@ScopePermission(name = FileScopeName.PEM_REMOVE, scope = FileScope.PEM_REMOVE)
 	public void removePermissions(String fileId, SysPermissionTarget type, List<?> ids) {
 		switch (type) {
 		case SYSROLE:

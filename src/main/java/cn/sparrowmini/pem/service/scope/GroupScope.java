@@ -1,21 +1,35 @@
 package cn.sparrowmini.pem.service.scope;
 
-public interface GroupScope extends PreserveScope {
-	String type="group";
-	String admin="admin";
-	String SCOPE_ADMIN_CREATE = admin + ":" + type + ":create";
-	String SCOPE_ADMIN_READ = admin + ":" + type + ":read";
-	String SCOPE_ADMIN_UPDATE = admin + ":" + type + ":update";
-	String SCOPE_ADMIN_DELETE = admin + ":" + type + ":delete";
-	String SCOPE_ADMIN_LIST = admin + ":" + type + ":list";
-	
-	String SCOPE_ADMIN_TREE = admin + ":" + type + ":tree";
-	
-	String SCOPE_ADMIN_MEMBER_ADD = admin + ":" + type + ":member:add";
-	String SCOPE_ADMIN_MEMBER_REMOVE = admin + ":" + type + ":member:remove";
-	String SCOPE_ADMIN_MEMBER_LIST = admin + ":" + type + ":member:list";
-	
-	String SCOPE_ADMIN_PARENT_ORG_ADD = admin + ":" + type + ":parent:org:add";
-	String SCOPE_ADMIN_PARENT_ORG_REMOVE = admin + ":" + type + ":parent:org:remove";
-	String SCOPE_ADMIN_PARENT_ORG_LIST = admin + ":" + type + ":parent:org:list";
+public final class GroupScope {
+
+	private final static String TYPE = "group";
+	private final static String ADMIN = "admin";
+	private final static String PREFIX = ADMIN + ":" + TYPE + ":";
+
+	private GroupScope() {
+
+	}
+
+	public final static String CREATE = PREFIX + ScopeOpConstant.CREATE;
+	public final static String READ = PREFIX + ScopeOpConstant.READ;
+	public final static String UPDATE = PREFIX + ScopeOpConstant.UPDATE;
+	public final static String DELETE = PREFIX + ScopeOpConstant.DELETE;
+	public final static String LIST = PREFIX + ScopeOpConstant.LIST;
+
+	public final static String TREE = ADMIN + ":" + TYPE + ":" + "tree";
+
+	public final class GroupMemberScope {
+		private final static String PREFIX = ADMIN + ":" + GroupScope.TYPE + ":member:";
+		public final static String ADD = PREFIX + ScopeOpConstant.ADD;
+		public final static String REMOVE = PREFIX + ScopeOpConstant.REMOVE;
+		public final static String LIST = PREFIX + ScopeOpConstant.LIST;
+	}
+
+	public final class GroupParentOrgScope {
+		private final static String PREFIX = ADMIN + ":" + GroupScope.TYPE + ":parent:org:";
+		public final static String ADD = PREFIX + ScopeOpConstant.ADD;
+		public final static String REMOVE = PREFIX + ScopeOpConstant.REMOVE;
+		public final static String LIST = PREFIX + ScopeOpConstant.LIST;
+	}
+
 }

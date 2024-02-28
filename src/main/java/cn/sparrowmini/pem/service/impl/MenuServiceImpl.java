@@ -12,12 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import cn.sparrowmini.common.api.SortService;
 import cn.sparrowmini.common.SparrowTree;
+import cn.sparrowmini.common.api.SortService;
 import cn.sparrowmini.common.api.TreeService;
 import cn.sparrowmini.pem.model.Menu;
 import cn.sparrowmini.pem.model.Sysrole;
@@ -25,21 +24,23 @@ import cn.sparrowmini.pem.model.common.MenuPermission;
 import cn.sparrowmini.pem.model.constant.MenuTreeTypeEnum;
 import cn.sparrowmini.pem.model.constant.SysPermissionTarget;
 import cn.sparrowmini.pem.model.relation.SysroleMenu;
-import cn.sparrowmini.pem.model.relation.UserMenu;
 import cn.sparrowmini.pem.model.relation.SysroleMenu.SysroleMenuPK;
+import cn.sparrowmini.pem.model.relation.UserMenu;
 import cn.sparrowmini.pem.model.relation.UserMenu.UserMenuPK;
 import cn.sparrowmini.pem.service.MenuService;
+import cn.sparrowmini.pem.service.ScopePermission;
 import cn.sparrowmini.pem.service.SysroleService;
 import cn.sparrowmini.pem.service.UserService;
 import cn.sparrowmini.pem.service.repository.MenuRepository;
 import cn.sparrowmini.pem.service.repository.SysroleMenuRepository;
 import cn.sparrowmini.pem.service.repository.UserMenuRepository;
 import cn.sparrowmini.pem.service.scope.MenuScope;
+import cn.sparrowmini.pem.service.scope.MenuScope.MenuPemScope;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class MenuServiceImpl extends AbstractPreserveScope implements MenuService,MenuScope {
+public class MenuServiceImpl extends AbstractPreserveScope implements MenuService {
 
 	@Autowired
 	MenuRepository menuRepository;
@@ -63,7 +64,8 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 	UserService userService;
 
 	public SparrowTree<Menu, String> getTreeByParentId(String parentId) {
-		Menu menu = parentId==null?new Menu(null, null): menuRepository.findById(parentId).orElse(new Menu(null, null));
+		Menu menu = parentId == null ? new Menu(null, null)
+				: menuRepository.findById(parentId).orElse(new Menu(null, null));
 		SparrowTree<Menu, String> menuTree = new SparrowTree<Menu, String>(menu, menu.getId(), menu.getNextNodeId(),
 				menu.getNextNodeId());
 		buildTree(menuTree);
@@ -192,7 +194,7 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_ADD + "') or hasRole('ROLE_" + ROLE_ADMIN + "')")
+	@ScopePermission(name = "", scope = MenuPemScope.ADD)
 	public void addPermission(MenuPermission menuPermission) {
 		if (menuPermission.getUserMenuPKs() != null) {
 			menuPermission.getUserMenuPKs().forEach(f -> {
@@ -209,7 +211,7 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 
 	@Override
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_REMOVE + "') or hasRole('ROLE_" + ROLE_SUPER_ADMIN + "')")
+	@ScopePermission(name = "", scope = MenuPemScope.REMOVE)
 	public void delPermission(MenuPermission menuPermission) {
 		if (menuPermission.getUserMenuPKs() != null) {
 			userMenuRepository.deleteByIdIn(menuPermission.getUserMenuPKs());
@@ -225,7 +227,7 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_ADD + "') or hasRole('ROLE_" + ROLE_ADMIN + "')")
+	@ScopePermission(name = "", scope = MenuPemScope.ADD)
 	public List<Sysrole> getSysroles(String menuId) {
 		List<Sysrole> sysroles = new ArrayList<>();
 		sysroleMenuRepository.findByIdMenuId(menuId).forEach(f -> {
@@ -242,13 +244,13 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 
 	@Override
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_DELETE + "') or hasRole('ROLE_" + ROLE_SUPER_SYSADMIN + "')")
+	@ScopePermission(name = "", scope = MenuScope.DELETE)
 	public void delete(@NotNull String[] ids) {
 		menuRepository.deleteByIdIn(ids);
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_LIST + "') or hasRole('ROLE_" + ROLE_ADMIN + "')")
+	@ScopePermission(name = "", scope = MenuScope.LIST)
 	public Page<Menu> all(Pageable pageable, Menu menu) {
 		log.debug("menu : {}", menu);
 		return menuRepository.search(menu, pageable);
@@ -257,9 +259,9 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 	@Override
 	@Transactional
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_SORT + "') or hasRole('ROLE_" + ROLE_ADMIN + "')")
+	@ScopePermission(name = "", scope = MenuScope.SORT)
 	public void setPosition(String menuId, String prevId, String nextId) {
-		Menu menu = menuRepository.getById(menuId);
+		Menu menu = menuRepository.getReferenceById(menuId);
 		menu.setPreviousNodeId(prevId);
 		menu.setNextNodeId(nextId);
 		setPosition(menu);
@@ -267,14 +269,14 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 
 	@Override
 	@ResponseStatus(code = HttpStatus.CREATED)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_CREATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = "", scope = MenuScope.CREATE)
 	public Menu save(Menu menu) {
 		return menuRepository.save(menu);
 	}
 
 	@Transactional
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_UPDATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = "", scope = MenuScope.UPDATE)
 	public Menu update(String menuId, Map<String, Object> map) {
 		Menu source = menuRepository.getReferenceById(menuId);
 //		source.setUrl(map.get("url").toString());
@@ -283,7 +285,7 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_LIST + "') or hasRole('ROLE_" + ROLE_ADMIN + "')")
+	@ScopePermission(name = "", scope = MenuPemScope.LIST)
 	public List<String> getUsers(String menuId) {
 		List<String> users = new ArrayList<>();
 		userMenuRepository.findByIdMenuId(menuId).forEach(f -> {
@@ -293,7 +295,7 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_TREE + "') or hasRole('ROLE_" + ROLE_ADMIN + "')")
+	@ScopePermission(name = "", scope = MenuScope.TREE)
 	public SparrowTree<Menu, String> getTree(MenuTreeTypeEnum type, String sysroleId, String username, String parentId,
 			Principal principal) {
 		switch (type) {
@@ -312,7 +314,7 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_LIST + "') or hasRole('ROLE_" + ROLE_ADMIN + "')")
+	@ScopePermission(name = "", scope = MenuPemScope.LIST)
 	public List<?> getPermissions(String menuId, SysPermissionTarget type) {
 		switch (type) {
 		case SYSROLE:
@@ -328,40 +330,39 @@ public class MenuServiceImpl extends AbstractPreserveScope implements MenuServic
 	@Override
 	@Transactional
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_ADD + "') or hasRole('ROLE_" + ROLE_ADMIN + "')")
+	@ScopePermission(name = "", scope = MenuPemScope.ADD)
 	public void addPermission(String menuId, SysPermissionTarget type, @NotNull List<String> permissions) {
-		permissions.forEach(f->{
+		permissions.forEach(f -> {
 			switch (type) {
 			case USER:
-				userMenuRepository.save(new UserMenu(menuId, (String) f));	
+				userMenuRepository.save(new UserMenu(menuId, (String) f));
 				break;
 			case SYSROLE:
-				sysroleMenuRepository.save(new SysroleMenu(menuId, (String)f));
+				sysroleMenuRepository.save(new SysroleMenu(menuId, (String) f));
 			default:
 				break;
 			}
-			
+
 		});
-		
-		
+
 	}
 
 	@Override
 	@Transactional
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_REMOVE + "') or hasRole('ROLE_" + ROLE_SUPER_ADMIN + "')")
+	@ScopePermission(name = "", scope = MenuPemScope.REMOVE)
 	public void delPermission(String menuId, SysPermissionTarget type, @NotNull List<String> permissions) {
-		permissions.forEach(f->{
+		permissions.forEach(f -> {
 			switch (type) {
 			case USER:
-				userMenuRepository.deleteById(new UserMenuPK((String)f,menuId));	
+				userMenuRepository.deleteById(new UserMenuPK((String) f, menuId));
 				break;
 			case SYSROLE:
-				sysroleMenuRepository.deleteById(new SysroleMenuPK((String)f,menuId));
+				sysroleMenuRepository.deleteById(new SysroleMenuPK((String) f, menuId));
 			default:
 				break;
 			}
-			
+
 		});
 	}
 

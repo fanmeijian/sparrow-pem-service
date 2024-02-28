@@ -1,18 +1,28 @@
 package cn.sparrowmini.pem.service.scope;
 
-public interface MenuScope extends PreserveScope{
-	String type="menu";
-	String admin="admin";
-	String SCOPE_ADMIN_CREATE = admin + ":" + type + ":create";
-	String SCOPE_ADMIN_READ = admin + ":" + type + ":read";
-	String SCOPE_ADMIN_UPDATE = admin + ":" + type + ":update";
-	String SCOPE_ADMIN_DELETE = admin + ":" + type + ":delete";
-	String SCOPE_ADMIN_LIST = admin + ":" + type + ":list";
-	String SCOPE_ADMIN_SORT = admin + ":" + type + ":sort";
-	String SCOPE_ADMIN_TREE = admin + ":" + type + ":tree";
-	
-	String SCOPE_ADMIN_PEM_ADD = admin + ":" + type + ":pem:add";
-	String SCOPE_ADMIN_PEM_REMOVE = admin + ":" + type + ":pem:remove";
-	String SCOPE_ADMIN_PEM_LIST = admin + ":" + type + ":pem:list";
-	
+public final class MenuScope {
+
+	private final static String TYPE = "menu";
+	private final static String ADMIN = "admin";
+	private final static String PREFIX = ADMIN + ":" + TYPE + ":";
+
+	private MenuScope() {
+
+	}
+
+	public final static String CREATE = PREFIX + ScopeOpConstant.CREATE;
+	public final static String READ = PREFIX + ScopeOpConstant.READ;
+	public final static String UPDATE = PREFIX + ScopeOpConstant.UPDATE;
+	public final static String DELETE = PREFIX + ScopeOpConstant.DELETE;
+	public final static String LIST = PREFIX + ScopeOpConstant.LIST;
+	public final static String SORT = PREFIX + ScopeOpConstant.SORT;
+	public final static String TREE = PREFIX + ScopeOpConstant.TREE;
+
+	public final class MenuPemScope {
+		private final static String PREFIX = ADMIN + ":" + MenuScope.TYPE + ":pem:";
+		public final static String ADD = PREFIX + ScopeOpConstant.ADD;
+		public final static String REMOVE = PREFIX + ScopeOpConstant.REMOVE;
+		public final static String LIST = PREFIX + ScopeOpConstant.LIST;
+	}
+
 }

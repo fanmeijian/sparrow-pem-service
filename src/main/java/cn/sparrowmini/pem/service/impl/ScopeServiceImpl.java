@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import cn.sparrowmini.pem.model.Scope;
 import cn.sparrowmini.pem.model.constant.SysPermissionTarget;
 import cn.sparrowmini.pem.model.relation.SysroleScope;
-import cn.sparrowmini.pem.model.relation.UserScope;
 import cn.sparrowmini.pem.model.relation.SysroleScope.SysroleScopePK;
+import cn.sparrowmini.pem.model.relation.UserScope;
 import cn.sparrowmini.pem.model.relation.UserScope.UserScopePK;
 import cn.sparrowmini.pem.service.ScopePermission;
 import cn.sparrowmini.pem.service.ScopeService;
@@ -29,9 +29,10 @@ import cn.sparrowmini.pem.service.repository.SysroleScopeRepository;
 import cn.sparrowmini.pem.service.repository.UserScopeRepository;
 import cn.sparrowmini.pem.service.scope.PreserveScope;
 import cn.sparrowmini.pem.service.scope.ScopeScope;
+import cn.sparrowmini.pem.service.scope.ScopeScope.ScopePemScope;
 
 @Service
-public class ScopeServiceImpl extends AbstractPreserveScope implements ScopeService, ScopeScope {
+public class ScopeServiceImpl extends AbstractPreserveScope implements ScopeService {
 
 	@Autowired
 	ScopeRepository scopeRepository;
@@ -45,14 +46,14 @@ public class ScopeServiceImpl extends AbstractPreserveScope implements ScopeServ
 
 	@Override
 	@ResponseStatus(value = HttpStatus.CREATED)
-	@ScopePermission(scope = "admin:scope:create",name = "创建scope")
+	@ScopePermission(scope = "admin:scope:create", name = "创建scope")
 //	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_CREATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
 	public Scope create(Scope scope) {
 		return scopeRepository.save(scope);
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_UPDATE + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = "", scope = ScopeScope.UPDATE)
 	public Scope update(String scopeId, Map<String, Object> map) {
 		Scope scope = scopeRepository.findById(scopeId).get();
 		PatchUpdateHelper.merge(scope, map);
@@ -60,27 +61,27 @@ public class ScopeServiceImpl extends AbstractPreserveScope implements ScopeServ
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_READ + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = "", scope = ScopeScope.READ)
 	public Scope get(String id) {
 		return scopeRepository.findById(id).get();
 	}
 
 	@Override
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_DELETE + "') or hasRole('ROLE_" + ROLE_SUPER_SYSADMIN + "')")
+	@ScopePermission(name = "", scope = ScopeScope.DELETE)
 	public void delete(List<String> ids) {
 		scopeRepository.deleteAllByIdInBatch(ids);
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_LIST + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = "", scope = ScopeScope.LIST)
 	public Page<Scope> all(Pageable pageable, Scope scope) {
 		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING);
 		return scopeRepository.findAll(Example.of(scope, matcher), pageable);
 	}
 
 	@Override
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_LIST + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = "", scope = ScopePemScope.LIST)
 	public Page<?> getPermissions(String scopeId, SysPermissionTarget type, Pageable pageable) {
 		Page<?> page = null;
 		switch (type) {
@@ -99,7 +100,7 @@ public class ScopeServiceImpl extends AbstractPreserveScope implements ScopeServ
 	@Override
 	@Transactional
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_ADD + "') or hasRole('ROLE_" + ROLE_SYSADMIN + "')")
+	@ScopePermission(name = "", scope = ScopePemScope.ADD)
 	public void addPermissions(String scopeId, SysPermissionTarget type, List<String> ids) {
 		switch (type) {
 		case SYSROLE:
@@ -121,7 +122,7 @@ public class ScopeServiceImpl extends AbstractPreserveScope implements ScopeServ
 	@Override
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	@Transactional
-	@PreAuthorize("hasAuthority('SCOPE_" + SCOPE_ADMIN_PEM_REMOVE + "') or hasRole('ROLE_" + ROLE_SUPER_SYSADMIN + "')")
+	@ScopePermission(name = "", scope = ScopePemScope.REMOVE)
 	public void removePermissions(String scopeId, SysPermissionTarget type, List<String> ids) {
 		switch (type) {
 		case SYSROLE:

@@ -22,10 +22,13 @@ import cn.sparrowmini.pem.model.relation.GroupSysrole.GroupSysrolePK;
 import cn.sparrowmini.pem.model.relation.GroupUser;
 import cn.sparrowmini.pem.model.relation.GroupUser.GroupUserId;
 import cn.sparrowmini.pem.service.GroupService;
+import cn.sparrowmini.pem.service.ScopePermission;
 import cn.sparrowmini.pem.service.repository.GroupSysroleRepository;
 import cn.sparrowmini.pem.service.repository.GroupUserRepository;
 import cn.sparrowmini.pem.service.repository.PemGroupRelationRepository;
 import cn.sparrowmini.pem.service.repository.PemGroupRepository;
+import cn.sparrowmini.pem.service.scope.GroupScope;
+import cn.sparrowmini.pem.service.scope.GroupScope.GroupMemberScope;
 
 @Service("pemGroupServiceImpl")
 public class GroupServiceImpl implements GroupService {
@@ -40,6 +43,7 @@ public class GroupServiceImpl implements GroupService {
 	private PemGroupRelationRepository groupRelationRepository;
 
 	@Override
+	@ScopePermission(scope = GroupScope.LIST, name = "")
 	public Page<Group> list(Pageable pageable, Group group) {
 		if (group != null) {
 			Example<Group> example = Example.of(group);
@@ -50,11 +54,13 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
+	@ScopePermission(scope = GroupScope.CREATE, name = "")
 	public String create(Group group) {
 		return this.groupRepository.save(group).getId();
 	}
 
 	@Override
+	@ScopePermission(scope = GroupScope.UPDATE, name = "")
 	public void update(String groupId, Map<String, Object> map) {
 		Group source = this.groupRepository.findById(groupId).get();
 		PatchUpdateHelper.merge(source, map);
@@ -62,16 +68,19 @@ public class GroupServiceImpl implements GroupService {
 
 	}
 
+	@ScopePermission(scope = GroupScope.DELETE, name = "")
 	@Override
 	public void delete(String groupId) {
 		this.groupRepository.deleteById(groupId);
 	}
 
+	@ScopePermission(scope = GroupScope.READ, name = "")
 	@Override
 	public Group get(String groupId) {
 		return this.groupRepository.findById(groupId).orElse(null);
 	}
 
+	@ScopePermission(scope = GroupMemberScope.ADD, name = "")
 	@Transactional
 	@Override
 	public void addMembers(String groupId, GroupTypeEnum type, String[] ids) {
@@ -95,6 +104,7 @@ public class GroupServiceImpl implements GroupService {
 
 	}
 
+	@ScopePermission(scope = GroupMemberScope.REMOVE, name = "")
 	@Override
 	public void removeMembers(String groupId, GroupTypeEnum type, String[] ids) {
 		for (String id : ids) {
@@ -115,6 +125,7 @@ public class GroupServiceImpl implements GroupService {
 		}
 	}
 
+	@ScopePermission(scope = GroupMemberScope.LIST, name = "")
 	@Override
 	public Page<?> members(String groupId, GroupTypeEnum type, Pageable pageable) {
 		switch (type) {
@@ -130,6 +141,7 @@ public class GroupServiceImpl implements GroupService {
 		return null;
 	}
 
+	@ScopePermission(scope = GroupScope.TREE, name = "")
 	@Override
 	public SparrowTree<Group, String> expandTree(String groupId) {
 		SparrowTree<Group, String> myTree = new SparrowTree<Group, String>(

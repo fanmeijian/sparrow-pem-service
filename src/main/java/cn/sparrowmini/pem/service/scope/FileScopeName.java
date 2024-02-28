@@ -1,14 +1,14 @@
 package cn.sparrowmini.pem.service.scope;
 
-public final class FileScope {
+public final class FileScopeName {
 	private final static String TYPE = "scope";
 	private final static String ADMIN = "admin";
 
-	private FileScope() {
+	private FileScopeName() {
 
 	}
 
-	public final static String CREATE = ADMIN + ":" + TYPE + ":" + ScopeOpConstant.CREATE;
+	public final static String CREATE = "创建文件";
 	public final static String READ = ADMIN + ":" + TYPE + ":" + ScopeOpConstant.READ;
 	public final static String UPDATE = ADMIN + ":" + TYPE + ":" + ScopeOpConstant.UPDATE;
 	public final static String DELETE = ADMIN + ":" + TYPE + ":" + ScopeOpConstant.DELETE;

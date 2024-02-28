@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import cn.sparrowmini.common.CurrentUser;
-import cn.sparrowmini.pem.model.constant.PermissionEnum;
+import cn.sparrowmini.pem.model.Scope;
 import cn.sparrowmini.pem.model.relation.SysroleScope.SysroleScopePK;
 import cn.sparrowmini.pem.model.relation.UserScope.UserScopePK;
 import cn.sparrowmini.pem.model.relation.UserSysrole;
@@ -19,7 +19,6 @@ import cn.sparrowmini.pem.service.repository.SysroleScopeRepository;
 import cn.sparrowmini.pem.service.repository.UserScopeRepository;
 import cn.sparrowmini.pem.service.repository.UserSysroleRepository;
 import lombok.extern.slf4j.Slf4j;
-import cn.sparrowmini.pem.model.Scope;
 
 @Slf4j
 @Aspect
@@ -54,11 +53,15 @@ public class ScopePermissionAspect {
 
 		// check sysrole scope permission
 		for (UserSysrole userSysrole : this.userSysroleRepository.findByIdUsername(username)) {
+			if (userSysrole.getSysrole().getCode().equals("SUPER_SYSADMIN")) {
+				return joinPoint.proceed();
+			}
 			String sysroleId = userSysrole.getId().getSysroleId();
 			if (this.sysroleScopeRepository.findById(new SysroleScopePK(sysroleId, scopeId)).orElse(null) != null) {
 				return joinPoint.proceed();
 			}
 		}
-		throw new NoPermissionException(String.join("-",username,"没有权限",scopePermission.name(),scopePermission.scope()));
+		throw new NoPermissionException(
+				String.join("-", username, "没有权限", scopePermission.name(), scopePermission.scope()));
 	}
 }
