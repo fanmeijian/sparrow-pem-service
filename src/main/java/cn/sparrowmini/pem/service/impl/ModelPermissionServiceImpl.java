@@ -7,6 +7,7 @@ import cn.sparrowmini.pem.model.constant.PermissionEnum;
 import cn.sparrowmini.pem.model.constant.PermissionTypeEnum;
 import cn.sparrowmini.pem.model.relation.SysroleModel;
 import cn.sparrowmini.pem.model.relation.SysroleModel.SysroleModelId;
+import cn.sparrowmini.pem.model.relation.UserSysrole;
 import cn.sparrowmini.pem.service.ModelPermissionService;
 import cn.sparrowmini.pem.service.exception.DenyPermissionException;
 import cn.sparrowmini.pem.service.exception.NoPermissionException;
@@ -36,8 +37,9 @@ public class ModelPermissionServiceImpl implements ModelPermissionService {
 
 	@Override
 	public boolean hasPermission(String modelId, PermissionEnum permission, String username) {
+		boolean allowPermissions = false;
 
-		this.userSysroleRepository.findByIdUsername(username).forEach(sysrole -> {
+		for (UserSysrole sysrole : this.userSysroleRepository.findByIdUsername(username)) {
 			// check deny permission
 			log.debug("sysrole: {}", sysrole.getSysrole());
 			SysroleModel denyPermission = this.sysroleModelRepository.findById(
@@ -55,14 +57,16 @@ public class ModelPermissionServiceImpl implements ModelPermissionService {
 					PermissionTypeEnum.ALLOW) > 0) {
 				SysroleModel allowPermission = this.sysroleModelRepository.findById(new SysroleModelId(modelId,
 						sysrole.getId().getSysroleId(), PermissionTypeEnum.ALLOW, permission)).orElse(null);
-				if (allowPermission == null) {
-					throw new NoPermissionException(
-							String.join(" ", "没有权限", modelId, permission.name(), sysrole.getSysrole().getName()));
+				if (allowPermission != null) {
+					allowPermissions = true;
 				}
 				;
 			}
-		});
+		}
 
+		if (!allowPermissions) {
+			throw new NoPermissionException(String.join(" ", "没有权限", modelId, permission.name(), username));
+		}
 		return true;
 	}
 
