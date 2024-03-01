@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
 import javax.transaction.Transactional;
 
+import org.reflections.ReflectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import cn.sparrowmini.pem.model.Model;
 import cn.sparrowmini.pem.model.ModelAttribute;
+import cn.sparrowmini.pem.model.common.AttributePermission;
 import cn.sparrowmini.pem.model.common.ModelPermission;
 import cn.sparrowmini.pem.model.relation.SysroleModel;
 import cn.sparrowmini.pem.model.relation.UserModel;
@@ -27,6 +29,7 @@ import cn.sparrowmini.pem.service.ModelService;
 import cn.sparrowmini.pem.service.PermissionRequestBody;
 import cn.sparrowmini.pem.service.repository.SysroleModelRepository;
 import cn.sparrowmini.pem.service.repository.UserModelRepository;
+import java.lang.reflect.Field;
 
 @Service
 public class ModelServiceImpl implements ModelService {
@@ -38,7 +41,6 @@ public class ModelServiceImpl implements ModelService {
 
 	@PersistenceContext
 	private EntityManager entityManager;
-
 
 	@Override
 	@Transactional
@@ -70,10 +72,27 @@ public class ModelServiceImpl implements ModelService {
 				Model model1 = new Model(e.getJavaType().getName());
 
 				List<ModelAttribute> attributes = new ArrayList<ModelAttribute>();
-				e.getAttributes().forEach(a -> {
-					ModelAttribute modelAttribute = new ModelAttribute(e.getJavaType().getName(), a.getName(),
-							a.getJavaType().getName());
+
+				@SuppressWarnings("unchecked")
+				Set<Field> fields = ReflectionUtils.getAllFields(e.getJavaType(),
+						ReflectionUtils.withAnnotation(AttributePermission.class));
+
+				for (Field field : fields) {
+					ModelAttribute modelAttribute = new ModelAttribute(e.getJavaType().getName(), field.getName(),
+							field.getType().getName());
 					attributes.add(modelAttribute);
+				}
+
+				e.getAttributes().forEach(a -> {
+
+//					try {
+
+//						if (Class.forName(e.getJavaType().getName()).getField(a.getName()).isAnnotationPresent(AttributePermission.class)) {
+//							ModelAttribute modelAttribute = new ModelAttribute(e.getJavaType().getName(), a.getName(),
+//									a.getJavaType().getName());
+//							attributes.add(modelAttribute);
+//						}
+//					} 
 				});
 				model1.setModelAttributes(attributes);
 				models.add(model1);
