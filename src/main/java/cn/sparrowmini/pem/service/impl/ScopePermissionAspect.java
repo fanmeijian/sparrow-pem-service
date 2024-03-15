@@ -3,6 +3,16 @@ package cn.sparrowmini.pem.service.impl;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.jeasy.rules.api.Facts;
+import org.jeasy.rules.api.Rule;
+import org.jeasy.rules.api.RuleListener;
+import org.jeasy.rules.api.Rules;
+import org.jeasy.rules.api.RulesEngine;
+import org.jeasy.rules.core.AbstractRulesEngine;
+import org.jeasy.rules.core.DefaultRulesEngine;
+import org.jeasy.rules.mvel.MVELRule;
+import org.jeasy.rules.mvel.MVELRuleFactory;
+import org.jeasy.rules.support.reader.YamlRuleDefinitionReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -12,6 +22,7 @@ import cn.sparrowmini.pem.model.Scope;
 import cn.sparrowmini.pem.model.relation.SysroleScope.SysroleScopePK;
 import cn.sparrowmini.pem.model.relation.UserScope.UserScopePK;
 import cn.sparrowmini.pem.model.relation.UserSysrole;
+import cn.sparrowmini.pem.model.token.UserToken;
 import cn.sparrowmini.pem.service.ScopePermission;
 import cn.sparrowmini.pem.service.exception.NoPermissionException;
 import cn.sparrowmini.pem.service.repository.ScopeRepository;
@@ -61,6 +72,9 @@ public class ScopePermissionAspect {
 				return joinPoint.proceed();
 			}
 		}
+
+		
+
 		throw new NoPermissionException(
 				String.join("-", username, "没有权限", scopePermission.name(), scopePermission.scope()));
 	}

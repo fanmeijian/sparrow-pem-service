@@ -65,7 +65,8 @@ public class UpdateEventListener implements PreUpdateEventListener {
 
 			}
 
-			return !this.modelPermissionService.hasPermission(event.getEntityName(), PermissionEnum.EDITOR, username);
+//			return !this.modelPermissionService.hasPermission(event.getEntityName(), PermissionEnum.EDITOR, username);
+			return !this.modelPermissionService.hasPermission(event.getEntityName(), PermissionEnum.EDITOR, username, event.getEntity());
 
 		} else {
 			return false;

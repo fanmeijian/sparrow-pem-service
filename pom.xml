@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>cn.sparrowmini</groupId>
 		<artifactId>sparrow-parent</artifactId>
-		<version>0.0.1</version>
+		<version>0.1.0</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>cn.sparrowmini</groupId>
 	<artifactId>sparrow-pem-service</artifactId>
-	<version>1.1.0</version>
+	<version>1.2.0</version>
 	<packaging>jar</packaging>
 	<properties>
 		<java.version>11</java.version>
@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>cn.sparrowmini</groupId>
 			<artifactId>sparrow-pem-model</artifactId>
-			<version>0.2.0</version>
+			<version>0.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
@@ -84,6 +84,14 @@
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
 			<version>0.10.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jeasy</groupId>
+			<artifactId>easy-rules-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jeasy</groupId>
+			<artifactId>easy-rules-mvel</artifactId>
 		</dependency>
 
 		<dependency>
