@@ -1,5 +1,8 @@
 package cn.sparrowmini.pem.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -7,13 +10,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import cn.sparrowmini.pem.model.ModelAttribute.ModelAttributePK;
+import cn.sparrowmini.pem.model.ModelAttributeRule;
+import cn.sparrowmini.pem.model.ModelAttributeRule.ModelAttributeRuleId;
 import cn.sparrowmini.pem.model.relation.SysroleModelAttribute;
-import cn.sparrowmini.pem.model.relation.UserModelAttribute;
 import cn.sparrowmini.pem.model.relation.SysroleModelAttribute.SysroleModelAttributeId;
+import cn.sparrowmini.pem.model.relation.UserModelAttribute;
 import cn.sparrowmini.pem.model.relation.UserModelAttribute.UserModelAttributeId;
 import cn.sparrowmini.pem.service.ModelAttributePermissionResponseBody;
 import cn.sparrowmini.pem.service.ModelAttributeService;
 import cn.sparrowmini.pem.service.PermissionRequestBody;
+import cn.sparrowmini.pem.service.repository.ModelAttributeRuleRepository;
 import cn.sparrowmini.pem.service.repository.SysroleModelAttributeRepository;
 import cn.sparrowmini.pem.service.repository.UserModelAttributeRepository;
 
@@ -24,6 +30,8 @@ public class ModelAttributeServiceImpl implements ModelAttributeService {
 	private UserModelAttributeRepository userModelAttributeRepository;
 	@Autowired
 	private SysroleModelAttributeRepository sysroleModelAttributeRepository;
+	@Autowired
+	private ModelAttributeRuleRepository modelAttributeRuleRepository;
 
 	@Override
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
@@ -42,6 +50,12 @@ public class ModelAttributeServiceImpl implements ModelAttributeService {
 						.save(new UserModelAttribute(new ModelAttributePK(modelId, attributeId), f.getUsername(),
 								f.getPermissionType(), f.getPermission()));
 			});
+		}
+
+		if (body.getRules() != null) {
+			List<ModelAttributeRule> rules = body.getRules().stream().map(m -> new ModelAttributeRule(modelId,
+					attributeId, m.getRuleId(), m.getPermissionType(), m.getPermission())).collect(Collectors.toList());
+			this.modelAttributeRuleRepository.saveAll(rules);
 		}
 	}
 
@@ -63,6 +77,15 @@ public class ModelAttributeServiceImpl implements ModelAttributeService {
 								f.getUsername(), f.getPermissionType(), f.getPermission()));
 			});
 		}
+
+		if (body.getRules() != null) {
+			List<ModelAttributeRuleId> modelRuleIds = body.getRules().stream()
+					.map(m -> new ModelAttributeRuleId(modelId, attributeId, m.getRuleId(), m.getPermissionType(),
+							m.getPermission()))
+					.collect(Collectors.toList());
+
+			this.modelAttributeRuleRepository.deleteAllById(modelRuleIds);
+		}
 	}
 
 	@Override
@@ -72,6 +95,9 @@ public class ModelAttributeServiceImpl implements ModelAttributeService {
 				.findByIdAttributeId(new ModelAttributePK(modelId, attributeId), Pageable.unpaged()).getContent());
 		permission.getUsernames().addAll(this.userModelAttributeRepository
 				.findByIdAttributeId(new ModelAttributePK(modelId, attributeId), Pageable.unpaged()).getContent());
+
+		permission.getRules().addAll(
+				this.modelAttributeRuleRepository.findByIdModelAttributeId(new ModelAttributePK(modelId, attributeId)));
 		return permission;
 	}
 

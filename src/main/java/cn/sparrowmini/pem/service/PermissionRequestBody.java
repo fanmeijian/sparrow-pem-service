@@ -10,19 +10,28 @@ import lombok.Data;
 @Data
 public class PermissionRequestBody {
 	private List<SysrolePermission> sysroles = new ArrayList<>();
-	private List<UserPermission> usernames= new ArrayList<>();
-	
+	private List<UserPermission> usernames = new ArrayList<>();
+	private List<RulePermission> rules = new ArrayList<>();
+
 	@Data
-	public static class SysrolePermission{
+	public static class SysrolePermission {
 		private String sysroleId;
 		private PermissionTypeEnum permissionType;
 		private PermissionEnum permission;
 	}
-	
+
 	@Data
-	public static class UserPermission{
+	public static class UserPermission {
 		private String username;
 		private PermissionTypeEnum permissionType;
 		private PermissionEnum permission;
 	}
+
+	@Data
+	public static class RulePermission {
+		private String ruleId;
+		private PermissionTypeEnum permissionType;
+		private PermissionEnum permission;
+	}
+
 }

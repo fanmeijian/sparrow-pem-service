@@ -1,8 +1,10 @@
 package cn.sparrowmini.pem.service.impl;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,18 +20,20 @@ import org.springframework.stereotype.Service;
 
 import cn.sparrowmini.pem.model.Model;
 import cn.sparrowmini.pem.model.ModelAttribute;
+import cn.sparrowmini.pem.model.ModelRule;
+import cn.sparrowmini.pem.model.ModelRule.ModelRuleId;
 import cn.sparrowmini.pem.model.common.AttributePermission;
 import cn.sparrowmini.pem.model.common.ModelPermission;
 import cn.sparrowmini.pem.model.relation.SysroleModel;
-import cn.sparrowmini.pem.model.relation.UserModel;
 import cn.sparrowmini.pem.model.relation.SysroleModel.SysroleModelId;
+import cn.sparrowmini.pem.model.relation.UserModel;
 import cn.sparrowmini.pem.model.relation.UserModel.UserModelId;
 import cn.sparrowmini.pem.service.ModelPermissionResponseBody;
 import cn.sparrowmini.pem.service.ModelService;
 import cn.sparrowmini.pem.service.PermissionRequestBody;
+import cn.sparrowmini.pem.service.repository.ModelRuleRepository;
 import cn.sparrowmini.pem.service.repository.SysroleModelRepository;
 import cn.sparrowmini.pem.service.repository.UserModelRepository;
-import java.lang.reflect.Field;
 
 @Service
 public class ModelServiceImpl implements ModelService {
@@ -38,6 +42,8 @@ public class ModelServiceImpl implements ModelService {
 	private SysroleModelRepository sysroleModelRepository;
 	@Autowired
 	private UserModelRepository userModelRepository;
+	@Autowired
+	private ModelRuleRepository modelRuleRepository;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -57,6 +63,14 @@ public class ModelServiceImpl implements ModelService {
 				this.userModelRepository.deleteById(
 						new UserModelId(modelId, f.getUsername(), f.getPermissionType(), f.getPermission()));
 			});
+		}
+
+		if (body.getRules() != null) {
+			List<ModelRuleId> modelRuleIds = body.getRules().stream()
+					.map(m -> new ModelRuleId(modelId, m.getRuleId(), m.getPermissionType(), m.getPermission()))
+					.collect(Collectors.toList());
+
+			this.modelRuleRepository.deleteAllById(modelRuleIds);
 		}
 	}
 
@@ -118,6 +132,13 @@ public class ModelServiceImpl implements ModelService {
 			});
 		}
 
+		if (body.getRules() != null) {
+			List<ModelRule> rules = body.getRules().stream()
+					.map(m -> new ModelRule(modelId, m.getRuleId(), m.getPermissionType(), m.getPermission()))
+					.collect(Collectors.toList());
+			this.modelRuleRepository.saveAll(rules);
+		}
+
 	}
 
 	@Override
@@ -127,6 +148,7 @@ public class ModelServiceImpl implements ModelService {
 				.addAll(this.sysroleModelRepository.findByIdModelId(modelId, Pageable.unpaged()).getContent());
 		permission.getUsernames()
 				.addAll(this.userModelRepository.findByIdModelId(modelId, Pageable.unpaged()).getContent());
+		permission.getRules().addAll(this.modelRuleRepository.findByIdModelId(modelId));
 		return permission;
 
 	}

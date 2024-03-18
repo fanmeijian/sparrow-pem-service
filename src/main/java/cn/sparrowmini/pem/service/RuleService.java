@@ -1,9 +1,13 @@
 package cn.sparrowmini.pem.service;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import cn.sparrowmini.pem.model.Rule;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,5 +19,6 @@ public interface RuleService {
 	@PostMapping("")
 	@Operation(summary = "新增规则", operationId = "newRule")
 	@ResponseBody
-	public Rule create(@RequestBody Rule rule);
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public List<String> create(@RequestBody List<Rule> rules);
 }
