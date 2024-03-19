@@ -121,7 +121,7 @@ public class TestPermission {
 	}
 
 	@Test
-	@WithMockUser(username = USERNAME, roles = { "USER", "ADMIN1" })
+	@WithMockUser(username = USERNAME, roles = { "USER", "ADMIN3" })
 	public void test2() {
 		SecurityContextHolder.getContext().getAuthentication().getAuthorities().forEach(f -> {
 			this.userSysroleRepository.save(new UserSysrole(this.sysroleRepository
@@ -136,13 +136,21 @@ public class TestPermission {
 				DataPermission dataReadPermission = this.dataPermissionRepository.save(new DataPermission());
 				TestEntity2 testEntity = new TestEntity2("aaaa" + i);
 				testEntity.setDataPermissionId(dataReadPermission.getId());
+				if (i == 3) {
+					this.dataPermissionSysroleRepository.save(new DataPermissionSysrole(dataReadPermission.getId(),
+							sysrole.getId(), PermissionTypeEnum.DENY, PermissionEnum.READER));
+				} else {
+//					this.dataPermissionSysroleRepository.save(new DataPermissionSysrole(dataReadPermission.getId(),
+//							sysrole.getId(), PermissionTypeEnum.ALLOW, PermissionEnum.READER));
+
+				}
 				this.dataPermissionSysroleRepository.save(new DataPermissionSysrole(dataReadPermission.getId(),
 						sysrole.getId(), PermissionTypeEnum.ALLOW, PermissionEnum.READER));
 
 				this.testDataPermissionRepository2.save(testEntity);
 			} else {
 
-				if (i == 7 ) {
+				if (i == 7) {
 					DataPermission dataReadPermission = this.dataPermissionRepository.save(new DataPermission());
 					this.testDataPermissionRepository2.save(new TestEntity2("bbbb" + i, dataReadPermission.getId()));
 					this.dataPermissionUsernameRepository.save(new DataPermissionUsername(dataReadPermission.getId(),
