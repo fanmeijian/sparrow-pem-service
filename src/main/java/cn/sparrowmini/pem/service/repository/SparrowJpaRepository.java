@@ -1,7 +1,6 @@
 package cn.sparrowmini.pem.service.repository;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -22,7 +21,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import cn.sparrowmini.pem.model.DataPermissionSysrole;
 import cn.sparrowmini.pem.model.DataPermissionSysrole_;
+import cn.sparrowmini.pem.model.DataPermissionUsername;
+import cn.sparrowmini.pem.model.DataPermissionUsername_;
 import cn.sparrowmini.pem.model.Sysrole;
+import cn.sparrowmini.pem.model.constant.PermissionEnum;
+import cn.sparrowmini.pem.model.constant.PermissionTypeEnum;
 import cn.sparrowmini.pem.model.relation.UserSysrole;
 import cn.sparrowmini.pem.model.relation.UserSysrole_;
 
@@ -34,7 +37,7 @@ import cn.sparrowmini.pem.model.relation.UserSysrole_;
  */
 
 @NoRepositoryBean
-public interface ExtendedJpaRepository<T, ID> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
+public interface SparrowJpaRepository<T, ID> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
 
 	@Override
 	default List<T> findAll(Sort sort) {
@@ -55,6 +58,7 @@ public interface ExtendedJpaRepository<T, ID> extends JpaRepository<T, ID>, JpaS
 			@Override
 			public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 
+				// 针对角色的授权
 				Subquery<UserSysrole> userSysroleSubquery = query.subquery(UserSysrole.class);
 				Root<UserSysrole> userSysroleRoot = userSysroleSubquery.from(UserSysrole.class);
 				userSysroleSubquery.select(userSysroleRoot.get("id").get("sysroleId"));
@@ -75,11 +79,47 @@ public interface ExtendedJpaRepository<T, ID> extends JpaRepository<T, ID>, JpaS
 				dataPermissionSysroleSubquery.where(criteriaBuilder
 						.in(dataPermissionSysroleRoot.get("id").get("sysroleId")).value(sysroleSubquery));
 
-				predicates.add(criteriaBuilder.or(
-						criteriaBuilder.in(root.get("dataPermissionId")).value(dataPermissionSysroleSubquery),
-						root.get("dataPermissionId").isNull()));
+				// 针对个人的授权
+				Subquery<DataPermissionUsername> dataPermissionUsernameSubquery = query
+						.subquery(DataPermissionUsername.class);
+				Root<DataPermissionUsername> dataPermissionUsernameRoot = dataPermissionUsernameSubquery
+						.from(DataPermissionUsername.class);
+				dataPermissionUsernameSubquery
+						.select(dataPermissionUsernameRoot.get(DataPermissionUsername_.ID).get("dataPermissionId"));
+				dataPermissionUsernameSubquery.where(criteriaBuilder.and(
+						criteriaBuilder.equal(
+								dataPermissionUsernameRoot.get(DataPermissionUsername_.ID).get("username"), username),
+						criteriaBuilder.equal(
+								dataPermissionUsernameRoot.get(DataPermissionUsername_.ID).get("permissionType"),
+								PermissionTypeEnum.ALLOW),
+						criteriaBuilder.equal(
+								dataPermissionUsernameRoot.get(DataPermissionUsername_.ID).get("permission"),
+								PermissionEnum.READER)));
+
+				Subquery<DataPermissionUsername> dataPermissionUsernameDenySubquery = query
+						.subquery(DataPermissionUsername.class);
+				Root<DataPermissionUsername> dataPermissionUsernameDenyRoot = dataPermissionUsernameDenySubquery
+						.from(DataPermissionUsername.class);
+				dataPermissionUsernameDenySubquery
+						.select(dataPermissionUsernameDenyRoot.get(DataPermissionUsername_.ID).get("dataPermissionId"));
+				dataPermissionUsernameDenySubquery.where(criteriaBuilder.and(criteriaBuilder.equal(
+						dataPermissionUsernameDenyRoot.get(DataPermissionUsername_.ID).get("username"), username),
+						criteriaBuilder.equal(
+								dataPermissionUsernameDenyRoot.get(DataPermissionUsername_.ID).get("permissionType"),
+								PermissionTypeEnum.DENY),
+						criteriaBuilder.equal(
+								dataPermissionUsernameDenyRoot.get(DataPermissionUsername_.ID).get("permission"),
+								PermissionEnum.READER)));
+
+				predicates.add(root.get("dataPermissionId").isNull());
+				predicates.add(criteriaBuilder.and(root.get("dataPermissionId").in(dataPermissionUsernameSubquery),
+						root.get("dataPermissionId").in(dataPermissionUsernameDenySubquery).not()));
+
+				predicates.add(criteriaBuilder.in(root.get("dataPermissionId")).value(dataPermissionSysroleSubquery));
+
 				query.distinct(true);
 				return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+
 			}
 
 		};

@@ -12,6 +12,12 @@ public class TestEntity2 extends DataPermissionEntity {
 		super();
 		this.name = name;
 	}
+	
+	public TestEntity2(String name, String dataPermissionId) {
+		super();
+		this.name = name;
+		this.setDataPermissionId(dataPermissionId);
+	}
 
 	public TestEntity2() {
 		super();

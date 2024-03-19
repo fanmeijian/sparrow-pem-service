@@ -17,15 +17,19 @@ import org.springframework.test.context.ContextConfiguration;
 
 import cn.sparrowmini.pem.model.DataPermission;
 import cn.sparrowmini.pem.model.DataPermissionSysrole;
+import cn.sparrowmini.pem.model.DataPermissionUsername;
 import cn.sparrowmini.pem.model.DataReadPermission;
 import cn.sparrowmini.pem.model.Scope;
 import cn.sparrowmini.pem.model.Sysrole;
+import cn.sparrowmini.pem.model.constant.PermissionEnum;
+import cn.sparrowmini.pem.model.constant.PermissionTypeEnum;
 import cn.sparrowmini.pem.model.relation.UserScope;
 import cn.sparrowmini.pem.model.relation.UserSysrole;
 import cn.sparrowmini.pem.service.exception.NoPermissionException;
 import cn.sparrowmini.pem.service.impl.SysroleServiceImpl;
 import cn.sparrowmini.pem.service.repository.DataPermissionRepository;
 import cn.sparrowmini.pem.service.repository.DataPermissionSysroleRepository;
+import cn.sparrowmini.pem.service.repository.DataPermissionUsernameRepository;
 import cn.sparrowmini.pem.service.repository.DataReadPermissionRepository;
 import cn.sparrowmini.pem.service.repository.ScopeRepository;
 import cn.sparrowmini.pem.service.repository.SysroleRepository;
@@ -59,6 +63,9 @@ public class TestPermission {
 
 	@Autowired
 	private DataPermissionSysroleRepository dataPermissionSysroleRepository;
+
+	@Autowired
+	private DataPermissionUsernameRepository dataPermissionUsernameRepository;
 
 	@Autowired
 	private UserSysroleRepository userSysroleRepository;
@@ -129,12 +136,23 @@ public class TestPermission {
 				DataPermission dataReadPermission = this.dataPermissionRepository.save(new DataPermission());
 				TestEntity2 testEntity = new TestEntity2("aaaa" + i);
 				testEntity.setDataPermissionId(dataReadPermission.getId());
-				this.dataPermissionSysroleRepository
-						.save(new DataPermissionSysrole(dataReadPermission.getId(), sysrole.getId()));
+				this.dataPermissionSysroleRepository.save(new DataPermissionSysrole(dataReadPermission.getId(),
+						sysrole.getId(), PermissionTypeEnum.ALLOW, PermissionEnum.READER));
 
 				this.testDataPermissionRepository2.save(testEntity);
 			} else {
-				this.testDataPermissionRepository2.save(new TestEntity2("bbbb" + i));
+
+				if (i == 7 ) {
+					DataPermission dataReadPermission = this.dataPermissionRepository.save(new DataPermission());
+					this.testDataPermissionRepository2.save(new TestEntity2("bbbb" + i, dataReadPermission.getId()));
+					this.dataPermissionUsernameRepository.save(new DataPermissionUsername(dataReadPermission.getId(),
+							USERNAME, PermissionTypeEnum.DENY, PermissionEnum.READER));
+					this.dataPermissionUsernameRepository.save(new DataPermissionUsername(dataReadPermission.getId(),
+							USERNAME, PermissionTypeEnum.ALLOW, PermissionEnum.READER));
+				} else {
+					TestEntity2 testEntity = this.testDataPermissionRepository2.save(new TestEntity2("bbbb" + i));
+				}
+
 			}
 
 		}
