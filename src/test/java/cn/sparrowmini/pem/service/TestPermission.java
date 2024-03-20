@@ -3,7 +3,6 @@ package cn.sparrowmini.pem.service;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,6 @@ import org.springframework.test.context.ContextConfiguration;
 import cn.sparrowmini.pem.model.DataPermission;
 import cn.sparrowmini.pem.model.DataPermissionSysrole;
 import cn.sparrowmini.pem.model.DataPermissionUsername;
-import cn.sparrowmini.pem.model.DataReadPermission;
 import cn.sparrowmini.pem.model.Scope;
 import cn.sparrowmini.pem.model.Sysrole;
 import cn.sparrowmini.pem.model.constant.PermissionEnum;
@@ -30,7 +28,6 @@ import cn.sparrowmini.pem.service.impl.SysroleServiceImpl;
 import cn.sparrowmini.pem.service.repository.DataPermissionRepository;
 import cn.sparrowmini.pem.service.repository.DataPermissionSysroleRepository;
 import cn.sparrowmini.pem.service.repository.DataPermissionUsernameRepository;
-import cn.sparrowmini.pem.service.repository.DataReadPermissionRepository;
 import cn.sparrowmini.pem.service.repository.ScopeRepository;
 import cn.sparrowmini.pem.service.repository.SysroleRepository;
 import cn.sparrowmini.pem.service.repository.UserScopeRepository;
@@ -54,9 +51,6 @@ public class TestPermission {
 
 	@Autowired
 	private SysroleRepository sysroleRepository;
-
-	@Autowired
-	private DataReadPermissionRepository dataReadPermissionRepository;
 
 	@Autowired
 	private DataPermissionRepository dataPermissionRepository;
@@ -91,34 +85,7 @@ public class TestPermission {
 	}
 
 	@Autowired
-	private TestDataPermissionRepository testDataPermissionRepository;
-
-	@Autowired
 	private TestDataPermissionRepository2 testDataPermissionRepository2;
-
-	@Test
-	@WithMockUser(username = USERNAME, roles = { "USER", "ADMIN" })
-	public void test1() {
-		for (int i = 0; i < 10; i++) {
-			if (i < 5) {
-				Sysrole sysrole = this.sysroleRepository.save(new Sysrole("ADMIN" + i, "ADMIN" + i));
-				DataReadPermission dataReadPermission = this.dataReadPermissionRepository
-						.save(new DataReadPermission(null, Collections.singleton(sysrole.getId()), null));
-				TestEntity testEntity = new TestEntity("aaaa" + i);
-				testEntity.setDataReadPermissionId(dataReadPermission.getId());
-				this.testDataPermissionRepository.save(testEntity);
-			} else {
-				this.testDataPermissionRepository.save(new TestEntity("bbbb" + i));
-			}
-
-		}
-
-		List<TestEntity> testEntities = this.testDataPermissionRepository.findAll();
-		testEntities.forEach(f -> {
-			System.out.println(f.getName());
-		});
-
-	}
 
 	@Test
 	@WithMockUser(username = USERNAME, roles = { "USER", "ADMIN3" })
