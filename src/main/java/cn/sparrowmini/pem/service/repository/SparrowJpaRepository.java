@@ -49,7 +49,28 @@ public interface SparrowJpaRepository<T, ID> extends JpaRepository<T, ID>, JpaSp
 
 	@Override
 	default List<T> findAll() {
-		Specification<T> specification = new Specification<T>() {
+
+		return findAll(getPermissionSpecification(null));
+	};
+
+	@Override
+	default Page<T> findAll(Pageable pageable) {
+		return findAll(getPermissionSpecification(null), pageable);
+	}
+
+	@Override
+	<S extends T> List<S> findAll(Example<S> example);
+
+	@Override
+	default <S extends T> Page<S> findAll(Example<S> example, Pageable pageable) {
+		return (Page<S>) findAll(getPermissionSpecification(example), pageable);
+	}
+
+	@Override
+	<S extends T> List<S> findAll(Example<S> example, Sort sort);
+
+	default <S extends T> Specification<T> getPermissionSpecification(Example<S> example) {
+		return new Specification<T>() {
 			private static final long serialVersionUID = 1L;
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -57,6 +78,10 @@ public interface SparrowJpaRepository<T, ID> extends JpaRepository<T, ID>, JpaSp
 
 			@Override
 			public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+
+				if (example != null) {
+					System.out.println(example.toString());
+				}
 
 				// 针对角色的授权
 				Subquery<UserSysrole> userSysroleSubquery = query.subquery(UserSysrole.class);
@@ -146,15 +171,5 @@ public interface SparrowJpaRepository<T, ID> extends JpaRepository<T, ID>, JpaSp
 			}
 
 		};
-		return findAll(specification);
-	};
-
-	@Override
-	Page<T> findAll(Pageable pageable);
-
-	@Override
-	<S extends T> List<S> findAll(Example<S> example);
-
-	@Override
-	<S extends T> List<S> findAll(Example<S> example, Sort sort);
+	}
 }

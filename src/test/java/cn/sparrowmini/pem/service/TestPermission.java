@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +16,19 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
+import cn.sparrowmini.common.EntityManagerHelper;
 import cn.sparrowmini.pem.model.DataPermission;
 import cn.sparrowmini.pem.model.DataPermissionSysrole;
 import cn.sparrowmini.pem.model.DataPermissionUsername;
 import cn.sparrowmini.pem.model.Scope;
 import cn.sparrowmini.pem.model.Sysrole;
+import cn.sparrowmini.pem.model.common.DataPermissionBean;
 import cn.sparrowmini.pem.model.constant.PermissionEnum;
 import cn.sparrowmini.pem.model.constant.PermissionTypeEnum;
 import cn.sparrowmini.pem.model.relation.UserScope;
 import cn.sparrowmini.pem.model.relation.UserSysrole;
 import cn.sparrowmini.pem.service.exception.NoPermissionException;
+import cn.sparrowmini.pem.service.impl.DataPermissionServiceImpl;
 import cn.sparrowmini.pem.service.impl.SysroleServiceImpl;
 import cn.sparrowmini.pem.service.repository.DataPermissionRepository;
 import cn.sparrowmini.pem.service.repository.DataPermissionSysroleRepository;
@@ -64,6 +69,12 @@ public class TestPermission {
 	@Autowired
 	private UserSysroleRepository userSysroleRepository;
 
+	@Autowired
+	DataPermissionServiceImpl dataPermissionService;
+
+	@Autowired
+	private EntityManager emf;
+
 	@BeforeEach
 	public void init() {
 		Scope scope = this.scopeRepository.save(new Scope("admin:sysrole:menu:add", "admin:sysrole:menu:add"));
@@ -71,6 +82,8 @@ public class TestPermission {
 
 		scope = this.scopeRepository.save(new Scope("新增角色", "admin:sysrole:add"));
 		this.userScopeRepository.save(new UserScope(USERNAME, scope.getId()));
+
+		EntityManagerHelper.entityManagerFactory = emf.getEntityManagerFactory();
 
 	}
 
@@ -137,5 +150,13 @@ public class TestPermission {
 			System.out.println(f.getName());
 		});
 
+	}
+
+	@Test
+	@WithMockUser(username = USERNAME, roles = { "USER", "ADMIN3" })
+	public void testNewPermission() {
+		Sysrole sysrole = this.sysroleRepository.save(new Sysrole("t", "t"));
+		this.dataPermissionService.create(sysrole.getModelName(), sysrole.getId(), new DataPermissionBean());
+		System.out.println(this.sysroleRepository.findById(sysrole.getId()).get().getDataPermissionId());
 	}
 }

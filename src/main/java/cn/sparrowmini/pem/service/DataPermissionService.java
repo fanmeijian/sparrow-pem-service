@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.sparrowmini.pem.model.DataPermission;
@@ -35,7 +36,8 @@ public interface DataPermissionService {
 	@PostMapping("")
 	@Operation(summary = "新增数据权限", operationId = "newDataPermission")
 	@ResponseBody
-	public String create(@RequestBody DataPermissionBean dataPermissionBean);
+	public String create(@RequestParam String modelId, @RequestParam String dataId,
+			@RequestBody DataPermissionBean dataPermissionBean);
 
 	@PatchMapping("/{id}")
 	@Operation(summary = "更新数据权限", operationId = "updateDataPermission")
